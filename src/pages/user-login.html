@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Patient Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Shared CSS -->
+  <link rel="stylesheet" href="../css/main.css" />
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="site-header">
+    <h1>Patient Login</h1>
+    <p class="tagline">Access your personal medical records</p>
+  </header>
+
+  <!-- Main Content -->
+  <main>
+    <section class="card login-card">
+      <form id="user-login-form">
+
+        <label>
+          Email Address
+          <input
+            type="email"
+            name="email"
+            placeholder="patient@example.com"
+            required
+          />
+        </label>
+
+        <label>
+          Password
+          <input
+            type="password"
+            name="password"
+            required
+          />
+        </label>
+
+        <button type="submit" class="btn">
+          Login
+        </button>
+
+      </form>
+
+      <p class="note">
+        Access is limited to your own medical records.
+      </p>
+    </section>
+  </main>
+
+</body>
+</html>

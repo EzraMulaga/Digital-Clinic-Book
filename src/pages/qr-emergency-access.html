@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Emergency QR Access</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Shared CSS -->
+  <link rel="stylesheet" href="../css/main.css" />
+
+  <!-- Supabase JS -->
+  <script src="https://unpkg.com/@supabase/supabase-js@2" defer></script>
+
+  <!-- External Script -->
+  <script src="../js/qr-emergency.js" defer></script>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="site-header emergency">
+    <h1>Emergency Access</h1>
+    <p class="tagline">Scan patient QR code to access emergency info</p>
+  </header>
+
+  <main>
+
+    <section class="card">
+      <label>
+        QR Token
+        <input type="text" id="qr-token" placeholder="Paste or scan QR token" />
+      </label>
+      <button class="btn" id="load-emergency-btn">Load Emergency Data</button>
+    </section>
+
+    <section class="card" id="emergency-data">
+      <!-- Emergency data will load here -->
+    </section>
+
+    <section class="card" id="full-access-section" style="display:none;">
+      <button class="btn" id="full-record-btn">
+        View Full Medical History
+      </button>
+    </section>
+
+  </main>
+
+</body>
+</html>

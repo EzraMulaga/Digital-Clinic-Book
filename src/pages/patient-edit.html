@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Edit Patient Information</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Shared CSS -->
+  <link rel="stylesheet" href="../css/main.css" />
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="site-header">
+    <h1>Edit My Information</h1>
+    <p class="tagline">Update personal details only</p>
+  </header>
+
+  <!-- Main Content -->
+  <main>
+
+    <section class="card login-card">
+      <form id="patient-edit-form">
+
+        <label>
+          Full Name
+          <input type="text" name="full_name" value="John Doe" />
+        </label>
+
+        <label>
+          Date of Birth
+          <input type="date" name="date_of_birth" value="1998-03-12" />
+        </label>
+
+        <label>
+          Blood Type
+          <input type="text" name="blood_type" value="O+" />
+        </label>
+
+        <label>
+          Allergies
+          <input type="text" name="allergies" value="Penicillin" />
+        </label>
+
+        <label>
+          Chronic Conditions
+          <input type="text" name="conditions" value="Asthma" />
+        </label>
+
+        <button type="submit" class="btn">
+          Save Changes
+        </button>
+
+        <a href="patient-info.html" class="btn" style="margin-left:0.5rem;">
+          Cancel
+        </a>
+
+      </form>
+
+      <p class="note">
+        Medical diagnoses, treatments, and prescriptions can only be modified
+        by registered medical practitioners.
+      </p>
+
+    </section>
+
+  </main>
+
+</body>
+</html>
