@@ -9,7 +9,7 @@ if (source !== "emergency") {
         Patient search is only available through
         emergency medical access.
       </p>
-      <a href="../index.html">Return Home</a>
+      <a href="/public/index.html">Return Home</a>
     </main>
   `;
 }

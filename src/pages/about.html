@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="About Digital Clinic Book – Secure patient medical records access" />
+  <title>About – Digital Clinic Book</title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="../src/css/main.css" />
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="site-header">
+    <h1>About Digital Clinic Book</h1>
+    <p class="tagline">Secure • Accessible • Reliable</p>
+  </header>
+
+  <!-- Navigation -->
+  <nav class="main-nav">
+    <ul>
+      <li><a href="../index.html">Home</a></li>
+      <li><a href="patient-search.html">Patient Lookup</a></li>
+      <li><a href="practitioner-login.html">Practitioner Login</a></li>
+      <li><a href="user-login.html">Patient Login</a></li>
+      <li><a href="qr-emergency-access.html">QR Scanner</a></li>
+      <li><a href="about.html" class="active">About</a></li>
+    </ul>
+  </nav>
+
+  <!-- Main Content -->
+  <main>
+
+    <section class="intro">
+      <h2>Project Overview</h2>
+      <p>
+        The Digital Clinic Book is a secure, web-based platform designed to
+        replace traditional paper-based clinic books. It enables medical staff
+        and patients to access medical records quickly and safely, with
+        specific access controls based on user roles.
+      </p>
+    </section>
+
+    <section class="cards">
+      <article class="card">
+        <h3>Emergency Access</h3>
+        <p>
+          Provides immediate access to essential medical information during emergencies,
+          including blood type, allergies, chronic conditions, and emergency notes.
+          Emergency access does not require a login.
+        </p>
+      </article>
+
+      <article class="card">
+        <h3>Patient Accounts</h3>
+        <p>
+          Patients can create an account to securely view their personal medical
+          history, including previous visits, diagnoses, treatments, and prescriptions.
+          Access is strictly limited to the patient’s own data.
+        </p>
+      </article>
+
+      <article class="card">
+        <h3>Practitioner Accounts</h3>
+        <p>
+          Medical practitioners can log in to access full patient medical records,
+          manage visits, diagnoses, treatments, and prescriptions. All access
+          is authenticated and auditable.
+        </p>
+      </article>
+
+      <article class="card">
+        <h3>QR Code Integration</h3>
+        <p>
+          Each patient is assigned a unique QR code that can be scanned to access
+          emergency information quickly. Practitioners can also use QR codes
+          to pull full patient records after authentication.
+        </p>
+      </article>
+    </section>
+
+    <section class="intro">
+      <h2>Objectives</h2>
+      <ul>
+        <li>Digitize clinic records for faster and safer access.</li>
+        <li>Maintain patient privacy and enforce role-based access.</li>
+        <li>Provide emergency medical data without compromising security.</li>
+        <li>Enable audit logging and accountability for all data access.</li>
+        <li>Integrate modern QR code scanning for quick identification.</li>
+      </ul>
+    </section>
+
+    <section class="intro">
+      <h2>Technology Stack</h2>
+      <ul>
+        <li>Frontend: HTML5, CSS3, JavaScript</li>
+        <li>Backend & Database: Supabase (PostgreSQL)</li>
+        <li>Authentication: Supabase Auth (email & password)</li>
+        <li>Deployment: Web server (single-machine installation supported)</li>
+      </ul>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <p>&copy; 2026 Digital Clinic Book</p>
+    <p>For authorized medical use only</p>
+  </footer>
+
+</body>
+</html>
