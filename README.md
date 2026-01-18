@@ -6,3 +6,5 @@ This offers a digital format of the traditional clinic book. It allows users to 
 
 ## What it provides.
 It provides a plateform to builde of where medical professional can access medical records of patients that have prior treatment from other hospitals. This can help speed up diagnosis and treatment.
+
+This repository serves as a demonstration of what this project would look like fully developed. 
