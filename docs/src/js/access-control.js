@@ -1,3 +1,9 @@
+/**
+ * NOTE:
+ * This file currently contains placeholder / partial logic.
+ * Access rules and data handling are under active development.
+ */
+
 const params = new URLSearchParams(window.location.search);
 const source = params.get("source");
 

@@ -1,3 +1,9 @@
+/**
+ * NOTE:
+ * This file currently contains placeholder / partial logic.
+ * Access rules and data handling are under active development.
+ */
+
 // Initialize Supabase client
 const supabaseUrl = "https://YOUR_PROJECT_ID.supabase.co";
 const supabaseKey = "YOUR_PUBLIC_ANON_KEY";
