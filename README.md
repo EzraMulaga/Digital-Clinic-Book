@@ -1,4 +1,8 @@
 # Digital Clinic Book
+> ⚠️ **Work in Progress**
+>
+> This project is an early-stage prototype. Core workflows and JavaScript
+> logic are still under development.
 
 ## Overview
 
