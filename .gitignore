@@ -1,0 +1,21 @@
+# Environment
+.env
+.env.*
+*.local
+
+# Secrets
+*.key
+*.pem
+*.crt
+*.pfx
+secrets.json
+credentials.json
+
+# Supabase local
+supabase/.env
+supabase/.temp/
+
+# OS / IDE
+.DS_Store
+.idea/
+.vscode/
