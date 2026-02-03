@@ -4,6 +4,9 @@
 > This project is an early-stage prototype. Core workflows and JavaScript
 > logic are still under development.
 
+Note: The application source lives under docs/src to support GitHub Pages hosting.
+
+
 ## Overview
 
 The **Digital Clinic Book** is a conceptual software project that explores replacing traditional paper-based clinic books in **Papua New Guinea** with a secure digital alternative.
