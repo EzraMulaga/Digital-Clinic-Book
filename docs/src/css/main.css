@@ -164,3 +164,22 @@ input {
   color: #555;
   margin-top: 1rem;
 }
+/*Disclaimer */
+.demo-notice {
+  background-color: #fff3cd;
+  border-left: 6px solid #ff9800;
+  padding: 1.2rem 1.5rem;
+  margin: 1.5rem auto;
+  max-width: 960px;
+  font-size: 0.95rem;
+}
+
+.demo-notice h2 {
+  margin-top: 0;
+  color: #8a5d00;
+}
+
+.demo-notice p {
+  margin: 0.5rem 0;
+  line-height: 1.5;
+}
