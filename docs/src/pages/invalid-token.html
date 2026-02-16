@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Invalid QR Token | Digital Clinic Book</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../css/main.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="site-header emergency">
+    <h1>Digital Clinic Book</h1>
+    <p class="tagline">Emergency Access Portal</p>
+  </header>
+
+  <!-- Demo Notice -->
+  <section class="demo-notice">
+    <h2>Demo Environment Notice</h2>
+    <p>
+      This website is a <strong>demonstration version</strong> of the Digital Clinic Book system.
+    </p>
+    <p>
+      All data displayed on this site is <strong>entirely fictional</strong> and is used solely for
+      demonstration and testing purposes.
+    </p>
+    <p>
+      This application is <strong>not a live medical system</strong> and must not be used for
+      clinical decision-making, patient care, or real-world medical records.
+    </p>
+  </section>
+
+  <!-- Navigation Bar -->
+  <nav class="main-nav">
+    <ul>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="patient-search.html">Patient Lookup</a></li>
+      <li><a href="practitioner-login.html">Practitioner Login</a></li>
+      <li><a href="user-login.html">Patient Login</a></li>
+      <li><a href="qr-emergency-access.html">QR Scanner</a></li>
+      <li><a href="about.html">About</a></li>
+    </ul>
+  </nav>
+
+  <!-- Main Content -->
+  <main>
+    <section class="intro">
+      <h2 style="color:#8a0000;">Invalid or Expired QR Code</h2>
+      <p>
+        The QR token provided is invalid, expired, or does not grant access to an emergency profile.
+      </p>
+      <p class="note">
+        Please verify the QR code and try again. If this issue persists, contact the issuing facility.
+      </p>
+    </section>
+
+    <section class="cards">
+      <div class="card" style="border-left:5px solid #b30000;">
+        <h3>Possible Causes</h3>
+        <ul style="margin-left: 1rem; line-height: 1.6;">
+          <li>QR token malformed</li>
+          <li>Token expired</li>
+          <li>Access revoked</li>
+          <li>Incorrect access route</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>Next Steps</h3>
+        <p>You may return to the QR scanner or navigate to a safe location.</p>
+        <br>
+        <a href="qr-emergency-access.html" class="btn danger">Retry QR Scan</a>
+        <a href="../../index.html" class="btn">Return Home</a>
+      </div>
+    </section>
+
+    <p class="note" style="text-align:center; margin-top:2rem;">
+      All emergency access attempts are logged in demo mode for auditing purposes.
+    </p>
+
+  </main>
+
+</body>
+</html>

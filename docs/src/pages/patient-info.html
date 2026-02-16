@@ -40,6 +40,7 @@
       <li><a href="user-login.html">Patient Login</a></li>
       <li><a href="qr-emergency-access.html">QR Scanner</a></li>
       <li><a href="about.html" class="active">About</a></li>
+      <li><a id="logout-btn" class="btn danger" href="logout.html" style="display:none; float:right; margin-top:0.5rem;">Logout</a></li>
     </ul>
   </nav>
 
@@ -100,6 +101,8 @@
     </p>
 
   </main>
+<script type="module" src="../js/auth/show-logout-if-auth.js"></script>
+<script type="module" src="../js/auth/require-auth.js"></script>
 
 </body>
 </html>

@@ -59,10 +59,11 @@ document.addEventListener("DOMContentLoaded", () => {
       .eq("qr_token", token)
       .single();
 
-    if (error || !patient) {
+        if (error || !patient) {
       console.warn("No emergency record found:", error);
-      emergencyData.innerHTML =
-        "<p>No emergency data found for this QR token.</p>";
+
+      // Redirect to Invalid Token page (same folder as this page)
+      window.location.replace("invalid-token.html?reason=not_found");
       return;
     }
 
