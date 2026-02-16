@@ -1,0 +1,71 @@
+@startuml
+title Digital-Clinic-Book Demo — Website Flow (UML Activity)
+
+start
+:Open Home (docs/index.html);
+
+if (Choose navigation) then (About)
+  :Open About (src/pages/about.html);
+  :Return Home;
+  :Open Home (docs/index.html);
+
+elseif (QR Emergency Access)
+  :Open QR Emergency Access (src/pages/qr-emergency-access.html);
+  :Scan/Enter QR Token;
+  if (Token valid?) then (Yes)
+    :Open Emergency Access (src/pages/emergency-access.html);
+  else (No)
+    :Show error / retry;
+    :Open QR Emergency Access (src/pages/qr-emergency-access.html);
+  endif
+  :Return Home;
+  :Open Home (docs/index.html);
+
+elseif (Emergency Access)
+  :Open Emergency Access (src/pages/emergency-access.html);
+  :Return Home;
+  :Open Home (docs/index.html);
+
+elseif (User Login)
+  :Open User Login (src/pages/user-login.html);
+  :Enter credentials;
+  if (Auth success?) then (Yes)
+    :Open Patient Info (src/pages/patient-info.html);
+    if (Edit profile?) then (Yes)
+      :Open Patient Edit (src/pages/patient-edit.html);
+      :Save changes;
+      :Back to Patient Info (src/pages/patient-info.html);
+    else (No)
+      :View only;
+    endif
+  else (No)
+    :Show login error;
+    :Stay on User Login;
+  endif
+  :Return Home;
+  :Open Home (docs/index.html);
+
+else (Practitioner Login)
+  :Open Practitioner Login (src/pages/practitioner-login.html);
+  :Enter credentials;
+  if (Auth success?) then (Yes)
+    :Open Patient Search (src/pages/patient-search.html);
+    :Search/select patient;
+    :Open Patient Info (src/pages/patient-info.html);
+    if (Edit permitted?) then (Yes)
+      :Open Patient Edit (src/pages/patient-edit.html);
+      :Save changes;
+      :Back to Patient Info (src/pages/patient-info.html);
+    else (No)
+      :View only;
+    endif
+  else (No)
+    :Show login error;
+    :Stay on Practitioner Login;
+  endif
+  :Return Home;
+  :Open Home (docs/index.html);
+endif
+
+stop
+@enduml
