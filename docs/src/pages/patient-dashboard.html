@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Patient Dashboard | Digital Clinic Book</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="../css/main.css" />
+</head>
+<body>
+
+  <header class="site-header">
+    <h1>Digital Clinic Book</h1>
+    <p class="tagline">Patient Dashboard</p>
+  </header>
+
+  <section class="demo-notice">
+    <h2>Demo Environment Notice</h2>
+    <p>
+      This website is a <strong>demonstration version</strong> of the Digital Clinic Book system.
+    </p>
+    <p>
+      All data displayed on this site is <strong>entirely fictional</strong> and is used solely for
+      demonstration and testing purposes.
+    </p>
+    <p>
+      This application is <strong>not a live medical system</strong> and must not be used for
+      clinical decision-making, patient care, or real-world medical records.
+    </p>
+  </section>
+
+  <nav class="main-nav">
+    <ul>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="patient-search.html">Patient Lookup</a></li>
+      <li><a href="practitioner-login.html">Practitioner Login</a></li>
+      <li><a href="user-login.html">Patient Login</a></li>
+      <li><a href="qr-emergency-access.html">QR Scanner</a></li>
+      <li><a href="about.html">About</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <section class="intro">
+      <h2>Welcome, Patient</h2>
+      <p>
+        Use this dashboard to view your profile and manage key emergency information.
+      </p>
+      <p class="note">
+        In a real system, patients can control consent and see who accessed their record.
+      </p>
+    </section>
+
+    <section class="cards">
+      <div class="card">
+        <h3>My Profile</h3>
+        <p>View your stored emergency profile and core details.</p>
+        <a class="btn" href="patient-info.html">View My Info</a>
+      </div>
+
+      <div class="card">
+        <h3>Edit Emergency Info</h3>
+        <p>Update allergies, conditions, and emergency notes (demo placeholder).</p>
+        <a class="btn" href="patient-edit.html">Edit My Info</a>
+      </div>
+
+      <div class="card">
+        <h3>Emergency QR</h3>
+        <p>In production, you could regenerate a QR token and review access rules.</p>
+        <a class="btn danger" href="qr-emergency-access.html">Open QR Scanner</a>
+        <p class="note">Demo note: QR generation is not implemented here.</p>
+      </div>
+
+      <div class="card">
+        <h3>Account</h3>
+        <p class="note">Placeholder for session status and consent management.</p>
+        <a class="btn" href="logout.html">Logout</a>
+      </div>
+    </section>
+  </main>
+<script type="module" src="../js/auth/require-auth.js"></script>
+
+</body>
+</html>
