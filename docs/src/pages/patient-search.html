@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <title>Patient Search</title>
+
   <link rel="stylesheet" href="../css/main.css" />
-  <script defer src="../js/access-control.js"></script>
 </head>
 <body>
 
 <header class="site-header">
   <h1>Patient Search</h1>
 </header>
-  <!-- Disclaimer not for medical use. Demo only. -->
-  <section class="demo-notice">
+
+<section class="demo-notice">
   <h2>Demo Environment Notice</h2>
   <p>
     This website is a <strong>demonstration version</strong> of the Digital Clinic Book system.
@@ -26,33 +26,35 @@
     clinical decision-making, patient care, or real-world medical records.
   </p>
 </section>
-<!-- Navigation Bar-->
+
 <nav class="main-nav">
-    <ul>
-      <li><a href="../../index.html">Home</a></li>
-      <li><a href="patient-search.html">Patient Lookup</a></li>
-      <li><a href="practitioner-login.html">Practitioner Login</a></li>
-      <li><a href="user-login.html">Patient Login</a></li>
-      <li><a href="qr-emergency-access.html">QR Scanner</a></li>
-      <li><a href="about.html" class="active">About</a></li>
-    </ul>
-  </nav>
+  <ul>
+    <li><a href="../../index.html">Home</a></li>
+    <li><a href="patient-search.html" class="active">Patient Lookup</a></li>
+    <li><a href="practitioner-login.html">Practitioner Login</a></li>
+    <li><a href="user-login.html">Patient Login</a></li>
+    <li><a href="qr-emergency-access.html">QR Scanner</a></li>
+    <li><a href="about.html">About</a></li>
+  </ul>
+</nav>
 
 <main>
   <section class="card">
-    <form>
+    <form id="search-form">
       <label>
         Patient ID or QR Code
-        <input type="text" placeholder="Enter Patient ID" />
+        <input id="q" type="text" placeholder="Enter Patient ID or Name" autocomplete="off" />
       </label>
 
-      <button class="btn" type="submit">
-        Search
-      </button>
+      <button class="btn" type="submit">Search</button>
     </form>
+
+    <!-- Results go here -->
+    <ul id="results" class="results-list"></ul>
   </section>
 </main>
-<script type="module" src="../js/pages/patient-search.js"></script>
 
+<!-- Single module entrypoint for this page -->
+<script type="module" src="../js/pages/patient-search.js"></script>
 </body>
 </html>
