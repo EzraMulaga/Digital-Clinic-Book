@@ -1,0 +1,105 @@
+@startuml
+title Digital Clinic Book - Core Domain Model (Class Diagram)
+
+skinparam classAttributeIconSize 0
+
+class AuthUser <<Supabase Auth>> {
+  +id: uuid
+  +email: text
+  +created_at: timestamptz
+}
+
+class Patient {
+  +patient_id: uuid
+  +first_name: text
+  +last_name: text
+  +date_of_birth: date
+  +blood_type: text
+  +allergies: text
+  +chronic_conditions: text
+  +emergency_notes: text
+  +qr_token: text
+  +created_at: timestamptz
+}
+
+class PatientUser {
+  +patient_user_id: uuid
+  +auth_user_id: uuid
+  +patient_id: uuid
+  +created_at: timestamptz
+}
+
+class Practitioner {
+  +practitioner_id: uuid
+  +auth_user_id: uuid
+  +first_name: text
+  +last_name: text
+  +registration_number: text
+  +role: text
+  +is_active: boolean
+  +created_at: timestamptz
+}
+
+class Visit {
+  +visit_id: uuid
+  +patient_id: uuid
+  +practitioner_id: uuid
+  +visit_date: timestamptz
+  +reason_for_visit: text
+  +practitioner_name: text
+  +created_at: timestamptz
+}
+
+class Diagnosis {
+  +diagnosis_id: uuid
+  +visit_id: uuid
+  +diagnosis: text
+  +notes: text
+  +created_at: timestamptz
+}
+
+class Treatment {
+  +treatment_id: uuid
+  +visit_id: uuid
+  +treatment: text
+  +notes: text
+  +created_at: timestamptz
+}
+
+class Prescription {
+  +prescription_id: uuid
+  +visit_id: uuid
+  +medication_name: text
+  +dosage: text
+  +frequency: text
+  +duration: text
+  +instructions: text
+  +created_at: timestamptz
+}
+
+class EmergencyPatientView <<VIEW>> {
+  +patient_id: uuid
+  +first_name: text
+  +last_name: text
+  +blood_type: text
+  +allergies: text
+  +chronic_conditions: text
+  +emergency_notes: text
+}
+
+' --- Relationships ---
+AuthUser "1" -- "0..1" Practitioner : links via auth_user_id
+AuthUser "1" -- "0..1" PatientUser : links via auth_user_id
+
+Patient "1" -- "0..1" PatientUser : optional account
+Patient "1" -- "0..*" Visit : has
+
+Practitioner "1" -- "0..*" Visit : records
+
+Visit "1" -- "0..*" Diagnosis : contains
+Visit "1" -- "0..*" Treatment : contains
+Visit "1" -- "0..*" Prescription : contains
+
+EmergencyPatientView ..> Patient : reads minimal fields
+@enduml
+

@@ -1,0 +1,57 @@
+@startuml
+title Digital Clinic Book - Use Case Diagram (Self-signup OR Staff-created)
+
+left to right direction
+
+actor "Patient (Unauth)" as PatientUnauth
+actor "Patient (Auth)" as PatientAuth
+actor "Practitioner" as Prac
+actor "Admin Practitioner" as Admin
+actor "Emergency Viewer" as Emergency
+
+rectangle "Digital Clinic Book System" {
+  usecase "Create Patient Record\n(staff registration)" as UC_CreatePatient
+  usecase "Create Patient Account\n(self-signup)" as UC_SelfSignup
+  usecase "Claim/Link Account\nto Patient Record" as UC_Claim
+  usecase "Create Patient Account\n(staff-assisted)" as UC_StaffCreateAccount
+  usecase "Link Auth User to Patient" as UC_LinkPatientUser
+
+  usecase "Create Practitioner Account\n(admin only)" as UC_CreatePracAccount
+  usecase "Create Practitioner Profile" as UC_CreatePracProfile
+
+  usecase "Record Visit (MDI Book Entry)" as UC_RecordVisit
+  usecase "Add Diagnosis" as UC_AddDx
+  usecase "Add Treatment" as UC_AddTx
+  usecase "Add Prescription" as UC_AddRx
+
+  usecase "Emergency Lookup\n(QR token)" as UC_EmergencyLookup
+  usecase "View Emergency Snapshot\n(read-only)" as UC_EmergencyView
+}
+
+' Patient workflows
+PatientUnauth --> UC_SelfSignup
+PatientUnauth --> UC_Claim
+UC_SelfSignup --> UC_LinkPatientUser : includes
+UC_Claim --> UC_LinkPatientUser : includes
+PatientAuth --> UC_LinkPatientUser
+
+' Staff workflows
+Prac --> UC_CreatePatient
+Prac --> UC_StaffCreateAccount
+UC_StaffCreateAccount --> UC_LinkPatientUser : includes
+
+' Practitioner/admin workflows
+Admin --> UC_CreatePracAccount
+Admin --> UC_CreatePracProfile
+
+' Clinical recording
+Prac --> UC_RecordVisit
+UC_RecordVisit --> UC_AddDx : includes
+UC_RecordVisit --> UC_AddTx : includes
+UC_RecordVisit --> UC_AddRx : includes
+
+' Emergency
+Emergency --> UC_EmergencyLookup
+UC_EmergencyLookup --> UC_EmergencyView : includes
+
+@enduml
