@@ -50,6 +50,7 @@ export async function getUserRole(authUserId) {
   return { type: "unknown" };
 }
 
+
 export async function logout() {
   const { error } = await supabase.auth.signOut();
   if (error) console.error("signOut error:", error);
