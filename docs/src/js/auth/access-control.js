@@ -1,46 +1,59 @@
 /**
- * NOTE:
- * This file currently contains placeholder / partial logic.
- * Access rules and data handling are under active development.
+ * Access Control (client-side gating)
+ * Real security must be enforced with Supabase RLS policies.
  */
 
 import { supabase } from "../config/supabase.js";
 
-export async function requireAuth(redirectTo = ".././pages/user-login.html") {
-  const {data: {session}} = await supabase.auth.getSession();
-  if (!session){
+// From any /src/pages/*.html page, this relative path works:
+export async function requireAuth(redirectTo = "user-login.html") {
+  const {
+    data: { session },
+    error,
+  } = await supabase.auth.getSession();
+
+  if (error) {
+    console.error("getSession error:", error);
+  }
+
+  if (!session) {
     window.location.href = redirectTo;
     throw new Error("Not authenticated");
   }
+
   return session;
 }
 
-export async function getUserRole(authUserID) {
-  // Check if user is a practitioner
-  const {data: prac } = await supabase
-  .from("practitioners")
-  .select("practitioner_id, role, is_active")
-  .eq("auth_user_id", authUserID)
-  .maybesingle();
-  
-  if(prac?.is_active) return {type: "practitioner". ...prac};
-  // Check user is a patient
-  const {data: pu} = await supabase
-  .from("patient_users")
-  .select("patient_id, patient_user_id")
-  .eq("auth_user_id", authUserID)
-  .maybesingle();
+export async function getUserRole(authUserId) {
+  // Check practitioner
+  const { data: prac, error: pracErr } = await supabase
+    .from("practitioners")
+    .select("practitioner_id, role, is_active")
+    .eq("auth_user_id", authUserId)
+    .maybeSingle();
 
-  if (pu) return {type: "patient", ...pu};
+  if (pracErr) console.error("practitioner lookup error:", pracErr);
 
-  // return unkown if match not found.
-  return {type: "unkown"};
+  if (prac?.is_active) return { type: "practitioner", ...prac };
 
+  // Check patient
+  const { data: pu, error: puErr } = await supabase
+    .from("patient_users")
+    .select("patient_id, patient_user_id")
+    .eq("auth_user_id", authUserId)
+    .maybeSingle();
+
+  if (puErr) console.error("patient lookup error:", puErr);
+
+  if (pu) return { type: "patient", ...pu };
+
+  return { type: "unknown" };
 }
 
 export async function logout() {
-  await supabase.auth.signout();
-  // Check location for error
-  window.location.href = "index.html"
-  
+  const { error } = await supabase.auth.signOut();
+  if (error) console.error("signOut error:", error);
+
+  // From /src/pages/*.html, go back to your site home:
+  window.location.href = "../../index.html";
 }
