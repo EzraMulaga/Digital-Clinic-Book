@@ -131,3 +131,35 @@ export async function createPractitioner(data) {
   return row;
 }
 
+// Get a single practitioner by ID
+export async function getPractitioner(practitionerId) {
+  const { data, error } = await supabase
+    .from("practitioners")
+    .select("practitioner_id, first_name, last_name, registration_number, role, is_active")
+    .eq("practitioner_id", practitionerId)
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+// Update a practitioner's profile fields
+export async function updatePractitioner(practitionerId, updates) {
+  const { error } = await supabase
+    .from("practitioners")
+    .update(updates)
+    .eq("practitioner_id", practitionerId);
+
+  if (error) throw error;
+}
+
+// Update a visit's editable fields
+export async function updateVisit(visitId, updates) {
+  const { error } = await supabase
+    .from("visits")
+    .update(updates)
+    .eq("visit_id", visitId);
+
+  if (error) throw error;
+}
+

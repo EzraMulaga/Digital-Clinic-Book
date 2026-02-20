@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Edit Visit | Digital Clinic Book</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="../css/main.css" />
+</head>
+<body>
+
+  <header class="site-header">
+    <h1>Digital Clinic Book</h1>
+    <p class="tagline">Edit Visit</p>
+  </header>
+
+  <section class="demo-notice">
+    <h2>Demo Environment Notice</h2>
+    <p>
+      This website is a <strong>demonstration version</strong> of the Digital Clinic Book system.
+    </p>
+    <p>
+      All data displayed on this site is <strong>entirely fictional</strong> and is used solely for
+      demonstration and testing purposes.
+    </p>
+    <p>
+      This application is <strong>not a live medical system</strong> and must not be used for
+      clinical decision-making, patient care, or real-world medical records.
+    </p>
+  </section>
+
+  <nav class="main-nav">
+    <ul>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="patient-search.html">Patient Lookup</a></li>
+      <li><a href="practitioner-login.html">Practitioner Login</a></li>
+      <li><a href="user-login.html">Patient Login</a></li>
+      <li><a href="qr-emergency-access.html">QR Scanner</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a id="logout-btn" class="btn danger" href="logout.html" style="display:none; float:right; margin-top:0.5rem;">Logout</a></li>
+    </ul>
+  </nav>
+
+  <main>
+
+    <!-- Edit Visit Details -->
+    <section class="card login-card">
+      <h2>Update Visit Details</h2>
+      <p class="note">Update the reason for visit or practitioner name.</p>
+
+      <form id="visit-edit-form">
+        <label>
+          Reason for Visit *
+          <input type="text" name="reason_for_visit" placeholder="e.g. Fever and headache" required />
+        </label>
+
+        <label>
+          Practitioner Name
+          <input type="text" name="practitioner_name" placeholder="e.g. Dr. Alice Johnson" />
+        </label>
+
+        <button type="submit" class="btn">Save Changes</button>
+        <a id="back-link" href="visit-details.html" class="btn" style="margin-left:0.5rem;">Cancel</a>
+
+        <p id="visit-edit-message" class="note" style="display:none;"></p>
+      </form>
+    </section>
+
+    <!-- Existing Diagnoses -->
+    <section class="card">
+      <h2>Existing Diagnoses</h2>
+      <ul id="diagnoses-list">
+        <li class="note">No diagnoses recorded.</li>
+      </ul>
+    </section>
+
+    <!-- Add Diagnosis -->
+    <section class="card login-card">
+      <h2>Add Diagnosis</h2>
+      <form id="add-diagnosis-form">
+        <label>
+          Diagnosis *
+          <input type="text" name="diagnosis" placeholder="e.g. Upper Respiratory Infection" required />
+        </label>
+        <label>
+          Notes
+          <textarea name="diagnosis_notes" rows="2" placeholder="Additional clinical notes"></textarea>
+        </label>
+        <button type="submit" class="btn">Add Diagnosis</button>
+        <p id="diagnosis-message" class="note" style="display:none;"></p>
+      </form>
+    </section>
+
+    <!-- Existing Prescriptions -->
+    <section class="card">
+      <h2>Existing Prescriptions</h2>
+      <ul id="prescriptions-list">
+        <li class="note">No prescriptions recorded.</li>
+      </ul>
+    </section>
+
+    <!-- Add Prescription -->
+    <section class="card login-card">
+      <h2>Add Prescription</h2>
+      <form id="add-prescription-form">
+        <label>
+          Medication Name *
+          <input type="text" name="medication_name" placeholder="e.g. Amoxicillin" required />
+        </label>
+        <label>
+          Dosage
+          <input type="text" name="dosage" placeholder="e.g. 500mg" />
+        </label>
+        <label>
+          Frequency
+          <input type="text" name="frequency" placeholder="e.g. 3 times daily" />
+        </label>
+        <label>
+          Duration
+          <input type="text" name="duration" placeholder="e.g. 7 days" />
+        </label>
+        <label>
+          Instructions
+          <input type="text" name="instructions" placeholder="e.g. Take with food" />
+        </label>
+        <button type="submit" class="btn">Add Prescription</button>
+        <p id="prescription-message" class="note" style="display:none;"></p>
+      </form>
+    </section>
+
+    <!-- Existing Treatments -->
+    <section class="card">
+      <h2>Existing Treatments</h2>
+      <ul id="treatments-list">
+        <li class="note">No treatments recorded.</li>
+      </ul>
+    </section>
+
+    <!-- Add Treatment -->
+    <section class="card login-card">
+      <h2>Add Treatment</h2>
+      <form id="add-treatment-form">
+        <label>
+          Treatment *
+          <input type="text" name="treatment" placeholder="e.g. Steam inhalation" required />
+        </label>
+        <label>
+          Notes
+          <textarea name="treatment_notes" rows="2" placeholder="Additional treatment notes"></textarea>
+        </label>
+        <button type="submit" class="btn">Add Treatment</button>
+        <p id="treatment-message" class="note" style="display:none;"></p>
+      </form>
+    </section>
+
+  </main>
+
+  <script type="module" src="../js/auth/show-logout-if-auth.js"></script>
+  <script type="module" src="../js/pages/visit-edit.js"></script>
+
+</body>
+</html>
