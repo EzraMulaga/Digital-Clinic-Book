@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Edit Practitioner Profile | Digital Clinic Book</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="../css/main.css" />
+</head>
+<body>
+
+  <header class="site-header">
+    <h1>Digital Clinic Book</h1>
+    <p class="tagline">Edit Practitioner Profile</p>
+  </header>
+
+  <section class="demo-notice">
+    <h2>Demo Environment Notice</h2>
+    <p>
+      This website is a <strong>demonstration version</strong> of the Digital Clinic Book system.
+    </p>
+    <p>
+      All data displayed on this site is <strong>entirely fictional</strong> and is used solely for
+      demonstration and testing purposes.
+    </p>
+    <p>
+      This application is <strong>not a live medical system</strong> and must not be used for
+      clinical decision-making, patient care, or real-world medical records.
+    </p>
+  </section>
+
+  <nav class="main-nav">
+    <ul>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="patient-search.html">Patient Lookup</a></li>
+      <li><a href="practitioner-login.html">Practitioner Login</a></li>
+      <li><a href="user-login.html">Patient Login</a></li>
+      <li><a href="qr-emergency-access.html">QR Scanner</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a id="logout-btn" class="btn danger" href="logout.html" style="display:none; float:right; margin-top:0.5rem;">Logout</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <section class="card login-card">
+      <h2>Edit My Profile</h2>
+      <p class="note">
+        Update your practitioner details. All fields marked * are required.
+      </p>
+
+      <form id="practitioner-edit-form">
+
+        <label>
+          First Name *
+          <input type="text" name="first_name" placeholder="e.g. Alice" required />
+        </label>
+
+        <label>
+          Last Name *
+          <input type="text" name="last_name" placeholder="e.g. Johnson" required />
+        </label>
+
+        <label>
+          Registration Number *
+          <input type="text" name="registration_number" placeholder="e.g. MED-12345" required />
+        </label>
+
+        <label>
+          Role *
+          <select name="role" required>
+            <option value="">— Select Role —</option>
+            <option value="Doctor">Doctor</option>
+            <option value="Nurse">Nurse</option>
+            <option value="Medical Officer">Medical Officer</option>
+            <option value="Pharmacist">Pharmacist</option>
+            <option value="Specialist">Specialist</option>
+          </select>
+        </label>
+
+        <button type="submit" class="btn">Save Changes</button>
+        <a href="practitioner-dashboard.html" class="btn" style="margin-left:0.5rem;">Cancel</a>
+
+        <p id="form-message" class="note" style="display:none;"></p>
+
+      </form>
+    </section>
+  </main>
+
+  <script type="module" src="../js/auth/show-logout-if-auth.js"></script>
+  <script type="module" src="../js/pages/practitioner-edit.js"></script>
+
+</body>
+</html>

@@ -1,8 +1,9 @@
-import { requireAuth } from "../auth/access-control.js";
+import { requireAuth, getUserRole } from "../auth/access-control.js";
 import { getVisit } from "../services/clinic-services.js";
 import { escapeHtml } from "../utils/html-utils.js";
 
-await requireAuth("user-login.html");
+const session = await requireAuth("user-login.html");
+const role = await getUserRole(session.user.id);
 
 const params = new URLSearchParams(location.search);
 const visitId = params.get("visit_id");
@@ -49,6 +50,13 @@ try {
   const logAnotherLink = document.getElementById("log-another-visit");
   if (logAnotherLink && visit.patient_id) {
     logAnotherLink.href = `visit-create.html?patient_id=${encodeURIComponent(visit.patient_id)}`;
+  }
+
+  // Show edit link for practitioners only
+  const editVisitLink = document.getElementById("edit-visit-link");
+  if (editVisitLink && role.type === "practitioner") {
+    editVisitLink.href = `visit-edit.html?visit_id=${encodeURIComponent(visitId)}`;
+    editVisitLink.style.display = "inline-block";
   }
 
   // Diagnoses
