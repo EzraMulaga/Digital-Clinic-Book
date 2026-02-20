@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Visit Details | Digital Clinic Book</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="../css/main.css" />
+</head>
+<body>
+
+  <header class="site-header">
+    <h1>Digital Clinic Book</h1>
+    <p class="tagline">Visit Details</p>
+  </header>
+
+  <section class="demo-notice">
+    <h2>Demo Environment Notice</h2>
+    <p>
+      This website is a <strong>demonstration version</strong> of the Digital Clinic Book system.
+    </p>
+    <p>
+      All data displayed on this site is <strong>entirely fictional</strong> and is used solely for
+      demonstration and testing purposes.
+    </p>
+    <p>
+      This application is <strong>not a live medical system</strong> and must not be used for
+      clinical decision-making, patient care, or real-world medical records.
+    </p>
+  </section>
+
+  <nav class="main-nav">
+    <ul>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="patient-search.html">Patient Lookup</a></li>
+      <li><a href="practitioner-login.html">Practitioner Login</a></li>
+      <li><a href="user-login.html">Patient Login</a></li>
+      <li><a href="qr-emergency-access.html">QR Scanner</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a id="logout-btn" class="btn danger" href="logout.html" style="display:none; float:right; margin-top:0.5rem;">Logout</a></li>
+    </ul>
+  </nav>
+
+  <main>
+
+    <!-- Visit Summary -->
+    <section class="card" id="visit-summary">
+      <h2>Visit Summary</h2>
+      <p id="visit-loading" class="note">Loading visit details…</p>
+
+      <div id="visit-info" style="display:none;">
+        <p><strong>Visit Date:</strong> <span id="visit-date">—</span></p>
+        <p><strong>Reason for Visit:</strong> <span id="visit-reason">—</span></p>
+        <p><strong>Practitioner:</strong> <span id="visit-practitioner">—</span></p>
+      </div>
+    </section>
+
+    <!-- Diagnoses -->
+    <section class="card">
+      <h2>Diagnoses</h2>
+      <ul id="diagnoses-list">
+        <li class="note">No diagnoses recorded for this visit.</li>
+      </ul>
+    </section>
+
+    <!-- Prescriptions -->
+    <section class="card">
+      <h2>Prescriptions</h2>
+      <ul id="prescriptions-list">
+        <li class="note">No prescriptions recorded for this visit.</li>
+      </ul>
+    </section>
+
+    <!-- Treatments -->
+    <section class="card">
+      <h2>Treatments</h2>
+      <ul id="treatments-list">
+        <li class="note">No treatments recorded for this visit.</li>
+      </ul>
+    </section>
+
+    <!-- Actions -->
+    <section class="card">
+      <a class="btn" id="back-to-patient" href="patient-search.html">Back to Patient</a>
+      <a class="btn" href="visit-create.html" style="margin-left:0.5rem;">Log Another Visit</a>
+    </section>
+
+  </main>
+
+  <script type="module" src="../js/auth/show-logout-if-auth.js"></script>
+  <script type="module" src="../js/pages/practitioner-dashboard.js"></script>
+
+</body>
+</html>
