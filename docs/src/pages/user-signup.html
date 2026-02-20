@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Patient Sign Up | Digital Clinic Book</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="../css/main.css" />
+</head>
+<body>
+
+  <header class="site-header">
+    <h1>Digital Clinic Book</h1>
+    <p class="tagline">Patient Registration</p>
+  </header>
+
+  <section class="demo-notice">
+    <h2>Demo Environment Notice</h2>
+    <p>
+      This website is a <strong>demonstration version</strong> of the Digital Clinic Book system.
+    </p>
+    <p>
+      All data displayed on this site is <strong>entirely fictional</strong> and is used solely for
+      demonstration and testing purposes.
+    </p>
+    <p>
+      This application is <strong>not a live medical system</strong> and must not be used for
+      clinical decision-making, patient care, or real-world medical records.
+    </p>
+  </section>
+
+  <nav class="main-nav">
+    <ul>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="patient-search.html">Patient Lookup</a></li>
+      <li><a href="practitioner-login.html">Practitioner Login</a></li>
+      <li><a href="user-login.html">Patient Login</a></li>
+      <li><a href="qr-emergency-access.html">QR Scanner</a></li>
+      <li><a href="about.html">About</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <section class="card login-card" style="max-width:500px;">
+      <h2>Create Patient Account</h2>
+      <p class="note">
+        Register to access your personal medical records. Fields marked * are required.
+      </p>
+
+      <form id="user-signup-form">
+
+        <label>
+          First Name *
+          <input type="text" name="first_name" placeholder="e.g. John" required />
+        </label>
+
+        <label>
+          Last Name *
+          <input type="text" name="last_name" placeholder="e.g. Smith" required />
+        </label>
+
+        <label>
+          Date of Birth
+          <input type="date" name="date_of_birth" />
+        </label>
+
+        <label>
+          Blood Type
+          <select name="blood_type">
+            <option value="">— Select Blood Type —</option>
+            <option value="A+">A+</option>
+            <option value="A-">A-</option>
+            <option value="B+">B+</option>
+            <option value="B-">B-</option>
+            <option value="AB+">AB+</option>
+            <option value="AB-">AB-</option>
+            <option value="O+">O+</option>
+            <option value="O-">O-</option>
+            <option value="Unknown">Unknown</option>
+          </select>
+        </label>
+
+        <label>
+          Known Allergies
+          <input type="text" name="allergies" placeholder="e.g. Penicillin, Peanuts" />
+        </label>
+
+        <label>
+          Chronic Conditions
+          <input type="text" name="chronic_conditions" placeholder="e.g. Diabetes, Hypertension" />
+        </label>
+
+        <label>
+          Emergency Notes
+          <input type="text" name="emergency_notes" placeholder="e.g. Carries EpiPen" />
+        </label>
+
+        <label>
+          Email Address *
+          <input type="email" name="email" placeholder="patient@example.com" required />
+        </label>
+
+        <label>
+          Password *
+          <input type="password" name="password" minlength="8" required />
+        </label>
+
+        <label>
+          Confirm Password *
+          <input type="password" name="confirm_password" minlength="8" required />
+        </label>
+
+        <button type="submit" class="btn">Create Account</button>
+        <a href="user-login.html" class="btn btn-secondary" style="margin-left:0.5rem;">Back to Login</a>
+
+        <p id="signup-message" class="note" style="display:none;"></p>
+
+      </form>
+    </section>
+  </main>
+
+  <script type="module" src="../js/pages/user-signup.js"></script>
+
+</body>
+</html>

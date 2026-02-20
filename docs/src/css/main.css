@@ -128,6 +128,17 @@ main {
   background-color: #163a5f;
 }
 
+/* Secondary Button */
+.btn-secondary {
+  background-color: #fff;
+  color: #1e4d7b;
+  border: 2px solid #1e4d7b;
+}
+
+.btn-secondary:hover {
+  background-color: #e8f0f8;
+}
+
 /* Emergency / Danger Button */
 .btn.danger {
   background-color: #b30000;
