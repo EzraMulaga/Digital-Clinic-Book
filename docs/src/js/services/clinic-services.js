@@ -52,10 +52,10 @@ export async function getPatientVisits(patientId){
 }
 
 // Creates visits
-export async function createVisit({ patient_id, reason_for_visit, practitioner_name, practitioners_id }) {
+export async function createVisit({ patient_id, reason_for_visit, practitioner_name, practitioner_id }) {
   const { data, error } = await supabase
     .from("visits")
-    .insert([{ patient_id, reason_for_visit, practitioner_name, practitioners_id }])
+    .insert([{ patient_id, reason_for_visit, practitioner_name, practitioner_id }])
     .select("visit_id")
     .single();
 
@@ -78,5 +78,56 @@ export async function addPrescription(p) {
 export async function addTreatment(t) {
   const { error } = await supabase.from("treatments").insert([t]);
   if (error) throw error;
+}
+
+// Get a single visit with all related data
+export async function getVisit(visitId) {
+  const { data, error } = await supabase
+    .from("visits")
+    .select(`
+      visit_id, visit_date, reason_for_visit, practitioner_name, patient_id,
+      diagnoses(diagnosis_id, diagnosis, notes),
+      prescriptions(prescription_id, medication_name, dosage, frequency, duration, instructions),
+      treatments(treatment_id, treatment, notes)
+    `)
+    .eq("visit_id", visitId)
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+// Create a new patient
+export async function createPatient(data) {
+  const { data: row, error } = await supabase
+    .from("patients")
+    .insert([data])
+    .select("patient_id")
+    .single();
+
+  if (error) throw error;
+  return row;
+}
+
+// Update a patient's emergency/profile fields
+export async function updatePatient(patientId, updates) {
+  const { error } = await supabase
+    .from("patients")
+    .update(updates)
+    .eq("patient_id", patientId);
+
+  if (error) throw error;
+}
+
+// Create a new practitioner
+export async function createPractitioner(data) {
+  const { data: row, error } = await supabase
+    .from("practitioners")
+    .insert([data])
+    .select("practitioner_id")
+    .single();
+
+  if (error) throw error;
+  return row;
 }
 
