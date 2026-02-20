@@ -30,29 +30,31 @@
     <ul>
       <li><a href="../../index.html">Home</a></li>
       <li><a href="patient-search.html">Patient Lookup</a></li>
-      <li><a href="practitioner-login.html">Practitioner Login</a></li>
+      <li><a href="practitioner-login.html" class="active">Practitioner Login</a></li>
       <li><a href="user-login.html">Patient Login</a></li>
       <li><a href="qr-emergency-access.html">QR Scanner</a></li>
-      <li><a href="about.html" class="active">About</a></li>
+      <li><a href="about.html">About</a></li>
     </ul>
   </nav>
 
 <main>
   <section class="card login-card">
-    <form>
+    <form id="user-login-form">
       <label>
-        Practitioner ID
-        <input type="text" required />
+        Email Address
+        <input type="email" name="email" placeholder="practitioner@example.com" required />
       </label>
 
       <label>
         Password
-        <input type="password" required />
+        <input type="password" name="password" required />
       </label>
 
       <button class="btn" type="submit">
         Login
       </button>
+
+      <p id="login-error" class="error-message" role="alert"></p>
     </form>
 
     <p class="note">
@@ -61,5 +63,6 @@
   </section>
 </main>
 
+<script type="module" src="../js/pages/user-login.js"></script>
 </body>
 </html>
