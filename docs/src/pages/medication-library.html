@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Medication Library | Digital Clinic Book</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="../css/main.css" />
+</head>
+<body>
+
+  <header class="site-header">
+    <h1>Digital Clinic Book</h1>
+    <p class="tagline">Medication Reference Library</p>
+  </header>
+
+  <section class="demo-notice">
+    <h2>Demo Environment Notice</h2>
+    <p>
+      This website is a <strong>demonstration version</strong> of the Digital Clinic Book system.
+    </p>
+    <p>
+      All data displayed on this site is <strong>entirely fictional</strong> and is used solely for
+      demonstration and testing purposes.
+    </p>
+    <p>
+      This application is <strong>not a live medical system</strong> and must not be used for
+      clinical decision-making, patient care, or real-world medical records.
+    </p>
+  </section>
+
+  <nav class="main-nav">
+    <ul>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="patient-search.html">Patient Lookup</a></li>
+      <li><a href="practitioner-login.html">Practitioner Login</a></li>
+      <li><a href="user-login.html">Patient Login</a></li>
+      <li><a href="qr-emergency-access.html">QR Scanner</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a id="logout-btn" class="btn danger" href="logout.html" style="display:none; float:right; margin-top:0.5rem;">Logout</a></li>
+    </ul>
+  </nav>
+
+  <main>
+
+    <section class="intro">
+      <h2>Medication Library</h2>
+      <p>
+        A reference list of common medications used in clinic practice. Use this library
+        when recording prescriptions during a visit.
+      </p>
+      <p class="note">
+        Demo note: In production, this list would be loaded from a medications database table
+        with search and filter capabilities.
+      </p>
+    </section>
+
+    <!-- Search -->
+    <section class="card">
+      <form id="med-search-form">
+        <label>
+          Search Medications
+          <input id="med-q" type="text" placeholder="e.g. Amoxicillin, Paracetamol" autocomplete="off" />
+        </label>
+        <button class="btn" type="submit">Search</button>
+      </form>
+    </section>
+
+    <!-- Medication List -->
+    <section class="cards" id="medication-list">
+
+      <div class="card">
+        <h3>Amoxicillin</h3>
+        <p><strong>Class:</strong> Antibiotic (Penicillin)</p>
+        <p><strong>Common Dosage:</strong> 250–500 mg every 8 hours</p>
+        <p><strong>Common Duration:</strong> 5–10 days</p>
+        <p class="note">Caution: Allergy cross-reaction with Penicillin.</p>
+      </div>
+
+      <div class="card">
+        <h3>Paracetamol (Acetaminophen)</h3>
+        <p><strong>Class:</strong> Analgesic / Antipyretic</p>
+        <p><strong>Common Dosage:</strong> 500–1000 mg every 4–6 hours</p>
+        <p><strong>Common Duration:</strong> As needed, max 4 g/day</p>
+        <p class="note">Caution: Risk of liver toxicity in high doses.</p>
+      </div>
+
+      <div class="card">
+        <h3>Ibuprofen</h3>
+        <p><strong>Class:</strong> NSAID (Anti-inflammatory)</p>
+        <p><strong>Common Dosage:</strong> 200–400 mg every 6–8 hours</p>
+        <p><strong>Common Duration:</strong> As needed</p>
+        <p class="note">Caution: Avoid on empty stomach. Not for renal impairment.</p>
+      </div>
+
+      <div class="card">
+        <h3>Metformin</h3>
+        <p><strong>Class:</strong> Antidiabetic (Biguanide)</p>
+        <p><strong>Common Dosage:</strong> 500–850 mg with meals</p>
+        <p><strong>Common Duration:</strong> Long-term</p>
+        <p class="note">Caution: Monitor renal function. Withhold before contrast procedures.</p>
+      </div>
+
+      <div class="card">
+        <h3>Atenolol</h3>
+        <p><strong>Class:</strong> Beta-blocker (Antihypertensive)</p>
+        <p><strong>Common Dosage:</strong> 25–100 mg once daily</p>
+        <p><strong>Common Duration:</strong> Long-term</p>
+        <p class="note">Caution: Do not stop abruptly. Monitor heart rate and BP.</p>
+      </div>
+
+      <div class="card">
+        <h3>Salbutamol (Albuterol)</h3>
+        <p><strong>Class:</strong> Bronchodilator (Short-acting beta-2 agonist)</p>
+        <p><strong>Common Dosage:</strong> 100–200 mcg inhaled as needed</p>
+        <p><strong>Common Duration:</strong> As needed (rescue inhaler)</p>
+        <p class="note">Caution: Overuse may indicate poor asthma control.</p>
+      </div>
+
+    </section>
+
+    <section class="card">
+      <a class="btn" href="practitioner-dashboard.html">Back to Dashboard</a>
+    </section>
+
+  </main>
+
+  <script type="module" src="../js/auth/show-logout-if-auth.js"></script>
+  <script type="module" src="../js/pages/practitioner-dashboard.js"></script>
+
+</body>
+</html>

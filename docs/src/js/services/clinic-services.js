@@ -1,13 +1,15 @@
-import { supabase } from "../config/supabase";
+import { supabase } from "../config/supabase.js";
 
 // Patient
-export async function searchPatient(q) {
-    // Simple search implementation can be upgraded later on
-    const like = '%{q}';
+export async function searchPatients(q) {
+    // Strip characters that are special in PostgREST filter syntax to prevent
+    // filter parsing issues (e.g. commas used as OR separators).
+    const sanitized = q.replace(/[,()]/g, "");
+    const like = `%${sanitized}%`;
     const {data, error} = await supabase
     .from("patients")
     .select("patient_id, first_name, last_name, date_of_birth, blood_type")
-    .or('first_name.ilike.${like"}, last_name.ilike.${like}')
+    .or(`first_name.ilike.${like},last_name.ilike.${like}`)
     .order("last_name", {ascending: true})
     .limit(25);
     
@@ -17,8 +19,8 @@ export async function searchPatient(q) {
 }
 
 
-// Get patient ID
-export async function gertPatientID(patientId) {
+// Get patient by ID
+export async function getPatient(patientId) {
     const {data, error} = await supabase
     .from("patients")
     .select("*")

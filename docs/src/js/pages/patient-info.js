@@ -1,5 +1,6 @@
-import { requireAuth } from "../access-control.js";
-import { getPatient, getPatientVisits } from "../services/clinicService.js";
+import { requireAuth } from "../auth/access-control.js";
+import { getPatient, getPatientVisits } from "../services/clinic-services.js";
+import { escapeHtml } from "../utils/html-utils.js";
 
 await requireAuth();
 
@@ -16,17 +17,17 @@ try {
   const visits = await getPatientVisits(patientId);
   visitsBox.innerHTML = visits.map(v => `
     <article>
-      <h3>${new Date(v.visit_date).toLocaleString()} — ${v.reason_for_visit}</h3>
-      <p>Practitioner: ${v.practitioner_name ?? "—"}</p>
+      <h3>${escapeHtml(new Date(v.visit_date).toLocaleString())} — ${escapeHtml(v.reason_for_visit)}</h3>
+      <p>Practitioner: ${escapeHtml(v.practitioner_name ?? "—")}</p>
 
       <h4>Diagnoses</h4>
-      <ul>${(v.diagnoses ?? []).map(d => `<li>${d.diagnosis} — ${d.notes ?? ""}</li>`).join("") || "<li>None</li>"}</ul>
+      <ul>${(v.diagnoses ?? []).map(d => `<li>${escapeHtml(d.diagnosis)} — ${escapeHtml(d.notes ?? "")}</li>`).join("") || "<li>None</li>"}</ul>
 
       <h4>Prescriptions</h4>
-      <ul>${(v.prescriptions ?? []).map(p => `<li>${p.medication_name} ${p.dosage ?? ""} (${p.frequency ?? ""})</li>`).join("") || "<li>None</li>"}</ul>
+      <ul>${(v.prescriptions ?? []).map(p => `<li>${escapeHtml(p.medication_name)} ${escapeHtml(p.dosage ?? "")} (${escapeHtml(p.frequency ?? "")})</li>`).join("") || "<li>None</li>"}</ul>
 
       <h4>Treatments</h4>
-      <ul>${(v.treatments ?? []).map(t => `<li>${t.treatment} — ${t.notes ?? ""}</li>`).join("") || "<li>None</li>"}</ul>
+      <ul>${(v.treatments ?? []).map(t => `<li>${escapeHtml(t.treatment)} — ${escapeHtml(t.notes ?? "")}</li>`).join("") || "<li>None</li>"}</ul>
     </article>
   `).join("");
 } catch (err) {

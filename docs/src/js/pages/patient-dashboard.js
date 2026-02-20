@@ -1,4 +1,4 @@
-import { requireAuth, getUserRole, logout } from "../auth/access-control";// adjust path
+import { requireAuth, getUserRole, logout } from "../auth/access-control.js";
 
 (async () => {
   const session = await requireAuth("user-login.html");
