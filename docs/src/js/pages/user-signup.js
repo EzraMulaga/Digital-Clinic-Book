@@ -47,10 +47,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
 
-    // Step 2: Create patient record
+    // Step 2: Create patient record (auth linkage is stored separately in patient_users)
     const { data: patientRow, error: patientError } = await supabase
       .from("patients")
-      .insert([{ auth_user_id, first_name, last_name, date_of_birth, blood_type, allergies, chronic_conditions, emergency_notes }])
+      .insert([{ first_name, last_name, date_of_birth, blood_type, allergies, chronic_conditions, emergency_notes }])
       .select("patient_id")
       .single();
 
