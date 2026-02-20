@@ -50,7 +50,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Step 2: Create patient record
     const { data: patientRow, error: patientError } = await supabase
       .from("patients")
-      .insert([{ first_name, last_name, date_of_birth, blood_type, allergies, chronic_conditions, emergency_notes }])
+      .insert([{ auth_user_id, first_name, last_name, date_of_birth, blood_type, allergies, chronic_conditions, emergency_notes }])
       .select("patient_id")
       .single();
 
