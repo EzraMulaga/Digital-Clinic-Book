@@ -183,3 +183,13 @@ input {
   margin: 0.5rem 0;
   line-height: 1.5;
 }
+
+/* --------------------
+   Error Message
+-------------------- */
+.error-message {
+  color: #b30000;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+  min-height: 1.2em;
+}
