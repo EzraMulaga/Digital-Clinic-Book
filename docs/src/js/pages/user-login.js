@@ -1,4 +1,4 @@
-import { routeAfterAuth } from "../auth/authRouter";
+import { routeAfterAuth } from "../auth/authRouter.js";
 
 // after successful login:
 await routeAfterAuth({

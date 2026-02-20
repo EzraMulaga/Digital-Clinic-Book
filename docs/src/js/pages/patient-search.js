@@ -1,5 +1,6 @@
-import { requireAuth } from "../access-control.js";
-import { searchPatients, getPatient } from "../services/clinicService.js";
+import { requireAuth } from "../auth/access-control.js";
+import { searchPatients, getPatient } from "../services/clinic-services.js";
+import { escapeHtml } from "../utils/html-utils.js";
 
 await requireAuth();
 
@@ -27,8 +28,8 @@ form.addEventListener("submit", async (e) => {
       const p = await getPatient(q);
       results.innerHTML = `
         <li>
-          <a href="patient-info.html?patient_id=${p.patient_id}">
-            ${p.last_name}, ${p.first_name} (${p.date_of_birth ?? "DOB?"})
+          <a href="patient-info.html?patient_id=${escapeHtml(p.patient_id)}">
+            ${escapeHtml(p.last_name)}, ${escapeHtml(p.first_name)} (${escapeHtml(p.date_of_birth ?? "DOB?")})
           </a>
         </li>
       `;
@@ -41,14 +42,14 @@ form.addEventListener("submit", async (e) => {
     results.innerHTML = rows.length
       ? rows.map(p => `
           <li>
-            <a href="patient-info.html?patient_id=${p.patient_id}">
-              ${p.last_name}, ${p.first_name} (${p.date_of_birth ?? "DOB?"})
+            <a href="patient-info.html?patient_id=${escapeHtml(p.patient_id)}">
+              ${escapeHtml(p.last_name)}, ${escapeHtml(p.first_name)} (${escapeHtml(p.date_of_birth ?? "DOB?")})
             </a>
           </li>
         `).join("")
       : "<li>No matches found.</li>";
 
   } catch (err) {
-    results.innerHTML = `<li>Error: ${err.message}</li>`;
+    results.innerHTML = `<li>Error: ${escapeHtml(err.message)}</li>`;
   }
 });
