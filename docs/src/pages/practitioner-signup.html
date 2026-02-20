@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Practitioner Sign Up | Digital Clinic Book</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="../css/main.css" />
+</head>
+<body>
+
+  <header class="site-header">
+    <h1>Digital Clinic Book</h1>
+    <p class="tagline">Practitioner Registration</p>
+  </header>
+
+  <section class="demo-notice">
+    <h2>Demo Environment Notice</h2>
+    <p>
+      This website is a <strong>demonstration version</strong> of the Digital Clinic Book system.
+    </p>
+    <p>
+      All data displayed on this site is <strong>entirely fictional</strong> and is used solely for
+      demonstration and testing purposes.
+    </p>
+    <p>
+      This application is <strong>not a live medical system</strong> and must not be used for
+      clinical decision-making, patient care, or real-world medical records.
+    </p>
+  </section>
+
+  <nav class="main-nav">
+    <ul>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="patient-search.html">Patient Lookup</a></li>
+      <li><a href="practitioner-login.html">Practitioner Login</a></li>
+      <li><a href="user-login.html">Patient Login</a></li>
+      <li><a href="qr-emergency-access.html">QR Scanner</a></li>
+      <li><a href="about.html">About</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <section class="card login-card" style="max-width:500px;">
+      <h2>Create Practitioner Account</h2>
+      <p class="note">
+        Register as a new medical practitioner. All fields marked * are required.
+      </p>
+
+      <form id="practitioner-signup-form">
+
+        <label>
+          First Name *
+          <input type="text" name="first_name" placeholder="e.g. Alice" required />
+        </label>
+
+        <label>
+          Last Name *
+          <input type="text" name="last_name" placeholder="e.g. Johnson" required />
+        </label>
+
+        <label>
+          Registration Number *
+          <input type="text" name="registration_number" placeholder="e.g. MED-12345" required />
+        </label>
+
+        <label>
+          Role *
+          <select name="role" required>
+            <option value="">— Select Role —</option>
+            <option value="Doctor">Doctor</option>
+            <option value="Nurse">Nurse</option>
+            <option value="Medical Officer">Medical Officer</option>
+            <option value="Pharmacist">Pharmacist</option>
+            <option value="Specialist">Specialist</option>
+          </select>
+        </label>
+
+        <label>
+          Email Address *
+          <input type="email" name="email" placeholder="practitioner@example.com" required />
+        </label>
+
+        <label>
+          Password *
+          <input type="password" name="password" minlength="8" required />
+        </label>
+
+        <label>
+          Confirm Password *
+          <input type="password" name="confirm_password" minlength="8" required />
+        </label>
+
+        <button type="submit" class="btn">Create Account</button>
+        <a href="practitioner-login.html" class="btn btn-secondary" style="margin-left:0.5rem;">Back to Login</a>
+
+        <p id="signup-message" class="note" style="display:none;"></p>
+
+      </form>
+    </section>
+  </main>
+
+  <script type="module" src="../js/pages/practitioner-signup.js"></script>
+
+</body>
+</html>
