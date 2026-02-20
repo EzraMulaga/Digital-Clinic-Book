@@ -329,24 +329,178 @@ from patients;
 
 ---
 
-## 6. Security Model (Trial Phase)
+## 6. Security Model
+
+### Important: `patients` does NOT have `auth_user_id`
+
+The `patients` table stores **medical identity only**. Authentication linkage is kept in the separate `patient_users` table:
+
+```
+patient_users(patient_user_id, auth_user_id, patient_id, created_at)
+```
+
+Any RLS policy that checks user identity for `patients` **must join through `patient_users`**. Writing `patients.auth_user_id = auth.uid()` will cause the PostgREST error:
+
+> *Could not find the auth_user_id column of patients in the schema cache.*
+
+---
 
 ### Row Level Security
 
-```sql
-alter table patients enable row level security;
-```
-
-Trial policy (demo only):
+Enable RLS on all tables:
 
 ```sql
-create policy "Emergency read access"
-on patients
-for select
-using (true);
+alter table patients      enable row level security;
+alter table patient_users enable row level security;
+alter table practitioners enable row level security;
+alter table visits        enable row level security;
+alter table diagnoses     enable row level security;
+alter table treatments    enable row level security;
+alter table prescriptions enable row level security;
 ```
 
-> In production, this is replaced with token-based or role-based policies.
+---
+
+### `patients` policies
+
+```sql
+-- Remove any legacy policy that incorrectly referenced patients.auth_user_id
+drop policy if exists "Emergency read access" on patients;
+
+-- Active practitioners can read all patient records
+create policy "Practitioners can read patients"
+  on patients for select to authenticated
+  using (
+    exists (
+      select 1 from practitioners
+      where practitioners.auth_user_id = auth.uid()
+        and practitioners.is_active = true
+    )
+  );
+
+-- Active practitioners can create new patient records
+create policy "Practitioners can insert patients"
+  on patients for insert to authenticated
+  with check (
+    exists (
+      select 1 from practitioners
+      where practitioners.auth_user_id = auth.uid()
+        and practitioners.is_active = true
+    )
+  );
+
+-- Active practitioners can update patient records
+create policy "Practitioners can update patients"
+  on patients for update to authenticated
+  using (
+    exists (
+      select 1 from practitioners
+      where practitioners.auth_user_id = auth.uid()
+        and practitioners.is_active = true
+    )
+  )
+  with check (
+    exists (
+      select 1 from practitioners
+      where practitioners.auth_user_id = auth.uid()
+        and practitioners.is_active = true
+    )
+  );
+
+-- A patient user can read ONLY their own row — join through patient_users
+create policy "Patient users can read own record"
+  on patients for select to authenticated
+  using (
+    exists (
+      select 1 from patient_users
+      where patient_users.patient_id   = patients.patient_id
+        and patient_users.auth_user_id = auth.uid()
+    )
+  );
+
+-- A patient user can update ONLY their own row — join through patient_users
+create policy "Patient users can update own record"
+  on patients for update to authenticated
+  using (
+    exists (
+      select 1 from patient_users
+      where patient_users.patient_id   = patients.patient_id
+        and patient_users.auth_user_id = auth.uid()
+    )
+  )
+  with check (
+    exists (
+      select 1 from patient_users
+      where patient_users.patient_id   = patients.patient_id
+        and patient_users.auth_user_id = auth.uid()
+    )
+  );
+```
+
+---
+
+### `patient_users` policies
+
+```sql
+-- A patient user can read their own link row
+create policy "Patient users can read own link"
+  on patient_users for select to authenticated
+  using (auth_user_id = auth.uid());
+
+-- Active practitioners can read all patient–user links
+create policy "Practitioners can read patient_users"
+  on patient_users for select to authenticated
+  using (
+    exists (
+      select 1 from practitioners
+      where practitioners.auth_user_id = auth.uid()
+        and practitioners.is_active = true
+    )
+  );
+```
+
+---
+
+### `practitioners` policies
+
+```sql
+-- A practitioner can read and update their own profile
+create policy "Practitioners can read own profile"
+  on practitioners for select to authenticated
+  using (auth_user_id = auth.uid());
+
+create policy "Practitioners can update own profile"
+  on practitioners for update to authenticated
+  using (auth_user_id = auth.uid())
+  with check (auth_user_id = auth.uid());
+
+-- Active practitioners can read all practitioner rows
+create policy "Practitioners can read all practitioners"
+  on practitioners for select to authenticated
+  using (
+    exists (
+      select 1 from practitioners p2
+      where p2.auth_user_id = auth.uid()
+        and p2.is_active = true
+    )
+  );
+```
+
+> See `docs/Documentation/Database/rls-policies.sql` for the complete RLS setup
+> including self-registration insert policies, the `register_patient_user`
+> SECURITY DEFINER function, and policies for `visits`, `diagnoses`,
+> `treatments`, and `prescriptions`.
+
+---
+
+### Refreshing the PostgREST schema cache
+
+After applying any schema or RLS changes, notify PostgREST to reload immediately
+without restarting the server:
+
+```sql
+notify pgrst, 'reload schema';
+```
 
 ---
 
