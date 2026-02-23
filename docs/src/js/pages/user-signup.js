@@ -47,25 +47,20 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
 
-    // Step 2: Create patient record (auth linkage is stored separately in patient_users)
-    const { data: patientRow, error: patientError } = await supabase
-      .from("patients")
-      .insert([{ first_name, last_name, date_of_birth, blood_type, allergies, chronic_conditions, emergency_notes }])
-      .select("patient_id")
-      .single();
+    // Step 2: Create patient record and link auth user via SECURITY DEFINER function
+    // (bypasses RLS so the newly signed-up user is not blocked by row-level policies)
+    const { error: registerError } = await supabase.rpc("register_patient_user", {
+      p_first_name: first_name,
+      p_last_name: last_name,
+      p_date_of_birth: date_of_birth,
+      p_blood_type: blood_type,
+      p_allergies: allergies,
+      p_chronic_conditions: chronic_conditions,
+      p_emergency_notes: emergency_notes,
+    });
 
-    if (patientError) {
-      if (msgEl) { msgEl.textContent = `Patient record error: ${patientError.message}. Please contact support to complete your registration.`; msgEl.className = "error-message"; msgEl.style.display = "block"; }
-      return;
-    }
-
-    // Step 3: Link auth user to patient
-    const { error: linkError } = await supabase
-      .from("patient_users")
-      .insert([{ auth_user_id, patient_id: patientRow.patient_id }]);
-
-    if (linkError) {
-      if (msgEl) { msgEl.textContent = `Account link error: ${linkError.message}. Please contact support to complete your registration.`; msgEl.className = "error-message"; msgEl.style.display = "block"; }
+    if (registerError) {
+      if (msgEl) { msgEl.textContent = `Patient record error: ${registerError.message}. Please contact support to complete your registration.`; msgEl.className = "error-message"; msgEl.style.display = "block"; }
       return;
     }
 
