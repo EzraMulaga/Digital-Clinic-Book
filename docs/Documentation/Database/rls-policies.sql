@@ -380,14 +380,14 @@ create policy "Users can create own patient link"
 
 
 -- ---------------------------------------------------------------------------
--- 9. Atomic patient signup function (SECURITY DEFINER)
+-- 9. Atomic patient signup function (SECURITY DEFINER) — optional alternative
 -- ---------------------------------------------------------------------------
--- This function creates the patient record and the patient_users link in one
--- call, bypassing RLS for the insert.  It is safe because:
---   * it only inserts the calling user's own auth.uid()
---   * it uses SECURITY DEFINER so the anon/authenticated role is not blocked
+-- The client (user-signup.js) uses the Section 8 RLS policies to perform
+-- direct table inserts for patient self-registration.  This function is kept
+-- as an atomic, SECURITY DEFINER alternative that wraps both inserts in a
+-- single database transaction.  Deploy and call it instead if you prefer the
+-- atomic approach:
 --
--- Call from the client:
 --   const { data, error } = await supabase.rpc('register_patient_user', {
 --     p_first_name: '...', p_last_name: '...', ...
 --   });
