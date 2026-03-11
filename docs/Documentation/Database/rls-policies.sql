@@ -358,21 +358,28 @@ create policy "Patient users can read own prescriptions"
 -- These allow a newly signed-up authenticated user to create their own patient
 -- record and patient_users link during the registration flow in user-signup.js.
 -- The unique constraint on patient_users.auth_user_id prevents duplicates.
+--
+-- Design note: patients has no auth_user_id column, so PostgreSQL cannot
+-- derive ownership from the new row alone.  The WITH CHECK (true) policy on
+-- patients allows any authenticated user to insert; ownership is established
+-- by the immediately following insert into patient_users which is enforced by
+-- WITH CHECK (auth_user_id = auth.uid()).  Select and update access is
+-- controlled separately via the patient_users-join policies above.
 
--- A new user (who has no patient record yet) can insert one patient row
-create policy "New users can create their patient record"
+-- Drop old policies (renamed / replaced below) so this script is idempotent
+drop policy if exists "New users can create their patient record" on patients;
+drop policy if exists "Users can create own patient link"         on patient_users;
+
+-- Any authenticated user may insert a patient profile.
+-- Ownership is linked via patient_users immediately after.
+create policy "authenticated can insert patient profile"
   on patients
   for insert
   to authenticated
-  with check (
-    not exists (
-      select 1 from patient_users
-      where patient_users.auth_user_id = auth.uid()
-    )
-  );
+  with check (true);
 
--- A user can insert their own link row (auth_user_id must equal auth.uid())
-create policy "Users can create own patient link"
+-- A user may only insert a patient_users row for themselves.
+create policy "authenticated can create own patient mapping"
   on patient_users
   for insert
   to authenticated

@@ -48,8 +48,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // Step 2: Create the patient record.
-    // The "New users can create their patient record" RLS policy allows this
-    // for authenticated users who do not yet have a patient_users link.
+    // The "authenticated can insert patient profile" RLS policy allows any
+    // authenticated user to insert a patient row.  Ownership is established
+    // by the patient_users link inserted in Step 3.
     const { data: patientData, error: patientError } = await supabase
       .from("patients")
       .insert([{
@@ -70,8 +71,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // Step 3: Link the auth user to the newly created patient record.
-    // The "Users can create own patient link" RLS policy allows this when
-    // auth_user_id matches auth.uid().
+    // The "authenticated can create own patient mapping" RLS policy enforces
+    // that auth_user_id must equal auth.uid(), so users can only link
+    // themselves to a patient record.
     const { error: linkError } = await supabase
       .from("patient_users")
       .insert([{
