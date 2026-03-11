@@ -391,7 +391,15 @@ create policy "Users can create own patient link"
 --   const { data, error } = await supabase.rpc('register_patient_user', {
 --     p_first_name: '...', p_last_name: '...', ...
 --   });
+--
+-- NOTE: DROP before CREATE is required when redeploying after a signature
+-- change (e.g. if an older version included p_auth_user_id as a parameter).
+-- CREATE OR REPLACE cannot change parameter names or the return type of an
+-- existing function; dropping first ensures a clean, idempotent deployment.
 -- ---------------------------------------------------------------------------
+drop function if exists register_patient_user(uuid, text, text, date, text, text, text);
+drop function if exists register_patient_user(text, text, date, text, text, text, text);
+
 create or replace function register_patient_user(
   p_first_name         text,
   p_last_name          text,
