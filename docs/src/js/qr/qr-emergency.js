@@ -13,6 +13,16 @@ export async function getEmergencyByToken(token) {
   return data[0];
 }
 
+function vitalTile(label, value, critical = false) {
+  const hasValue = value != null && value !== "";
+  return `
+    <div class="vital-tile${critical && hasValue ? " critical" : ""}">
+      <span class="vital-label">${escapeHtml(label)}</span>
+      <span class="vital-value">${escapeHtml(hasValue ? value : "Not recorded")}</span>
+    </div>
+  `;
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   const loadBtn = document.getElementById("load-emergency-btn");
   const tokenInput = document.getElementById("qr-token");
@@ -25,27 +35,34 @@ document.addEventListener("DOMContentLoaded", () => {
   loadBtn.addEventListener("click", async () => {
     const token = tokenInput.value.trim();
     dataSection.innerHTML = "";
+    if (fullAccessSection) fullAccessSection.style.display = "none";
 
     if (!token) {
-      dataSection.innerHTML = "<p class='note'>Please enter a QR token.</p>";
+      dataSection.innerHTML = `<p class="note" style="text-align:center;">Please enter the code from the patient's card first.</p>`;
       return;
     }
 
-    dataSection.innerHTML = "<p class='note'>Loading…</p>";
+    const loadBtnLabel = loadBtn.textContent;
+    loadBtn.disabled = true;
+    loadBtn.textContent = "Looking up…";
+    dataSection.innerHTML = `<p class="note" style="text-align:center;">Looking up emergency information…</p>`;
 
     try {
       const patient = await getEmergencyByToken(token);
 
       dataSection.innerHTML = `
-        <h2>Emergency Patient Information</h2>
-        <ul>
-          <li><strong>Name:</strong> ${escapeHtml(patient.first_name)} ${escapeHtml(patient.last_name)}</li>
-          <li><strong>Date of Birth:</strong> ${escapeHtml(patient.date_of_birth ?? "—")}</li>
-          <li><strong>Blood Type:</strong> ${escapeHtml(patient.blood_type ?? "—")}</li>
-          <li><strong>Allergies:</strong> ${escapeHtml(patient.allergies ?? "None recorded")}</li>
-          <li><strong>Chronic Conditions:</strong> ${escapeHtml(patient.chronic_conditions ?? "None recorded")}</li>
-          <li><strong>Emergency Notes:</strong> ${escapeHtml(patient.emergency_notes ?? "None")}</li>
-        </ul>
+        <section class="card emergency-result">
+          <h2>
+            ${escapeHtml(patient.first_name)} ${escapeHtml(patient.last_name)}
+            ${patient.date_of_birth ? `<span class="vital-dob">DOB: ${escapeHtml(patient.date_of_birth)}</span>` : ""}
+          </h2>
+          <div class="vital-grid">
+            ${vitalTile("Blood Type", patient.blood_type)}
+            ${vitalTile("Allergies", patient.allergies, true)}
+            ${vitalTile("Chronic Conditions", patient.chronic_conditions)}
+            ${vitalTile("Emergency Notes", patient.emergency_notes, true)}
+          </div>
+        </section>
       `;
 
       if (fullAccessSection && fullRecordBtn) {
@@ -55,8 +72,13 @@ document.addEventListener("DOMContentLoaded", () => {
         };
       }
     } catch (err) {
-      dataSection.innerHTML = `<p class='note' style='color:red;'>Error: ${escapeHtml(err.message)}</p>`;
-      if (fullAccessSection) fullAccessSection.style.display = "none";
+      // Calm, dedicated failure page rather than an inline raw error --
+      // see docs/src/pages/invalid-token.html.
+      window.location.href = "invalid-token.html";
+      return;
+    } finally {
+      loadBtn.disabled = false;
+      loadBtn.textContent = loadBtnLabel;
     }
   });
 });

@@ -90,6 +90,8 @@ create table visits (
 );
 ```
 
+> ⚠️ **Live drift, confirmed 2026-08-21 via schema extract — decision made, migration pending execution.** `practitioner_name` (shown in the original DDL above for historical accuracy) was meant to be replaced by the `practitioner_id` FK (§5.2/§8, correctly enforced live as of 2026-08-21), but the original migration that added `practitioner_id` was additive — it never dropped `practitioner_name`. **Decision (project owner, 2026-08-21): drop it.** `practitioner_id` — joined to `practitioners` for display — is the sole source of truth going forward. App code (`clinic-services.js` and the visit create/edit/details/patient-info pages) has already been updated to stop reading/writing the free-text column. The actual `alter table visits drop column practitioner_name` is staged in [`migrations/20260821_drop_visits_practitioner_name.sql`](migrations/20260821_drop_visits_practitioner_name.sql) — not yet run. See ONGOING.md issue #9.
+
 ---
 
 ### 4.3 Diagnoses Table
@@ -296,6 +298,8 @@ Each visit is explicitly tied to an authenticated practitioner.
 alter table visits
 add column practitioner_id uuid references practitioners(practitioner_id);
 ```
+
+> ✅ **Fixed 2026-08-21.** The live `visits.practitioner_id` column previously had no FK constraint (a bare nullable `uuid`); a foreign key referencing `practitioners(practitioner_id)` has since been added live, matching the DDL above, with `ON DELETE NO ACTION` (Postgres' implicit default when unspecified — deleting a `practitioners` row that any `visits` row still references is blocked, rather than cascading or nulling). **Open question, not yet decided:** whether `NO ACTION` is actually the intended behavior — it currently means a practitioner can never be deleted once they've logged even one visit (there is no in-app delete-practitioner flow today, so this is latent, not an active problem). `SET NULL` would be the alternative if visits should survive practitioner deletion with the link simply cleared; `CASCADE` would be wrong here regardless (deleting a practitioner must never delete historical visit records). See issue #8 in [ONGOING.md](../../../ONGOING.md). The separate `practitioner_name` legacy-column question (§4.2, §9 below) is a different, already-decided item — see the migration.
 
 ---
 

@@ -1,5 +1,6 @@
 import { requireAuth, getUserRole } from "../auth/access-control.js";
 import { getPractitioner, updatePractitioner } from "../services/clinic-services.js";
+import { friendlyErrorMessage, validateRequiredFields } from "../utils/html-utils.js";
 
 const session = await requireAuth("user-login.html");
 const role = await getUserRole(session.user.id);
@@ -39,12 +40,25 @@ try {
   setVal("role", practitioner.role);
 } catch (err) {
   console.error("Failed to load practitioner data:", err);
+  if (msgEl) {
+    msgEl.textContent = `${friendlyErrorMessage(err, "We couldn't load your profile.")} Please try reloading the page.`;
+    msgEl.className = "error-message";
+    msgEl.style.display = "block";
+  }
 }
 
 // Handle form submission
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
-  if (msgEl) { msgEl.style.display = "none"; msgEl.textContent = ""; }
+  if (msgEl) { msgEl.style.display = "none"; msgEl.textContent = ""; msgEl.className = "note"; }
+
+  const valid = validateRequiredFields(form, [
+    { name: "first_name", label: "First name" },
+    { name: "last_name", label: "Last name" },
+    { name: "registration_number", label: "Registration number" },
+    { name: "role", label: "Role" },
+  ]);
+  if (!valid) return;
 
   const fd = new FormData(form);
   const first_name = fd.get("first_name")?.trim();
@@ -52,10 +66,9 @@ form.addEventListener("submit", async (e) => {
   const registration_number = fd.get("registration_number")?.trim();
   const role_value = fd.get("role");
 
-  if (!first_name || !last_name || !registration_number || !role_value) {
-    if (msgEl) { msgEl.textContent = "All required fields must be filled in."; msgEl.style.display = "block"; }
-    return;
-  }
+  const submitBtn = form.querySelector('button[type="submit"]');
+  const submitBtnLabel = submitBtn?.textContent;
+  if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = "Saving…"; }
 
   try {
     await updatePractitioner(role.practitioner_id, {
@@ -71,8 +84,10 @@ form.addEventListener("submit", async (e) => {
     }
   } catch (err) {
     if (msgEl) {
-      msgEl.textContent = `Error: ${err.message}`;
+      msgEl.textContent = friendlyErrorMessage(err);
       msgEl.style.display = "block";
     }
+  } finally {
+    if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = submitBtnLabel; }
   }
 });

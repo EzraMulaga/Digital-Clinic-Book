@@ -1,6 +1,6 @@
 import { requireAuth, getUserRole } from "../auth/access-control.js";
 import { getPatient, getPatientVisits } from "../services/clinic-services.js";
-import { escapeHtml } from "../utils/html-utils.js";
+import { escapeHtml, friendlyErrorMessage } from "../utils/html-utils.js";
 
 const session = await requireAuth();
 const role = await getUserRole(session.user.id);
@@ -57,7 +57,7 @@ try {
             ${escapeHtml(new Date(v.visit_date).toLocaleString())} — ${escapeHtml(v.reason_for_visit ?? "")}
             <a href="visit-details.html?visit_id=${escapeHtml(v.visit_id)}" class="btn" style="float:right; font-size:0.85rem;">Details</a>
           </h3>
-          <p><strong>Practitioner:</strong> ${escapeHtml(v.practitioner_name ?? "—")}</p>
+          <p><strong>Practitioner:</strong> ${escapeHtml(v.practitioner ? `${v.practitioner.first_name} ${v.practitioner.last_name}` : "—")}</p>
 
           <h4>Diagnoses</h4>
           <ul>${(v.diagnoses ?? []).map(d => `<li>${escapeHtml(d.diagnosis)} ${d.notes ? "— " + escapeHtml(d.notes) : ""}</li>`).join("") || "<li>None</li>"}</ul>
@@ -72,5 +72,8 @@ try {
       : "<p class='note'>No visits recorded.</p>";
   }
 } catch (err) {
-  if (patientBox) patientBox.textContent = `Error loading patient: ${err.message}`;
+  if (patientBox) {
+    patientBox.textContent = `${friendlyErrorMessage(err, "We couldn't load this patient's record.")} Please try again.`;
+    patientBox.className = "error-message";
+  }
 }

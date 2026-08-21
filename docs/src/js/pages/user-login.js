@@ -1,5 +1,6 @@
 import { supabase } from "../config/supabase.js";
 import { routeAfterAuth } from "../auth/authRouter.js";
+import { friendlyErrorMessage, validateRequiredFields } from "../utils/html-utils.js";
 
 const ROUTE_OPTIONS = {
   patientDashboard: "patient-dashboard.html",
@@ -35,18 +36,32 @@ document.addEventListener("DOMContentLoaded", async () => {
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
+    if (errorEl) errorEl.textContent = "";
+
+    const valid = validateRequiredFields(form, [
+      { name: "email", label: "Email address" },
+      { name: "password", label: "Password" },
+    ]);
+    if (!valid) return;
+
     const email = form.elements["email"].value.trim();
     const password = form.elements["password"].value;
 
-    if (errorEl) errorEl.textContent = "";
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const submitBtnLabel = submitBtn?.textContent;
+    if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = "Logging in…"; }
 
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    try {
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
 
-    if (error) {
-      if (errorEl) errorEl.textContent = error.message;
-      return;
+      if (error) {
+        if (errorEl) errorEl.textContent = friendlyErrorMessage(error);
+        return;
+      }
+
+      await routeAfterAuth(ROUTE_OPTIONS);
+    } finally {
+      if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = submitBtnLabel; }
     }
-
-    await routeAfterAuth(ROUTE_OPTIONS);
   });
 });

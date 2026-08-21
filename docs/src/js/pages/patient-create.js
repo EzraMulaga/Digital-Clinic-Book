@@ -1,5 +1,6 @@
 import { requireAuth, getUserRole } from "../auth/access-control.js";
 import { createPatient } from "../services/clinic-services.js";
+import { friendlyErrorMessage, validateRequiredFields } from "../utils/html-utils.js";
 
 const session = await requireAuth("user-login.html");
 const role = await getUserRole(session.user.id);
@@ -28,14 +29,19 @@ form.addEventListener("submit", async (e) => {
   e.preventDefault();
   if (msgEl) { msgEl.style.display = "none"; msgEl.textContent = ""; }
 
+  const valid = validateRequiredFields(form, [
+    { name: "first_name", label: "First name" },
+    { name: "last_name", label: "Last name" },
+  ]);
+  if (!valid) return;
+
   const fd = new FormData(form);
   const first_name = fd.get("first_name")?.trim();
   const last_name = fd.get("last_name")?.trim();
 
-  if (!first_name || !last_name) {
-    if (msgEl) { msgEl.textContent = "First name and last name are required."; msgEl.style.display = "block"; }
-    return;
-  }
+  const submitBtn = form.querySelector('button[type="submit"]');
+  const submitBtnLabel = submitBtn?.textContent;
+  if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = "Saving…"; }
 
   try {
     const patient = await createPatient({
@@ -51,8 +57,9 @@ form.addEventListener("submit", async (e) => {
     window.location.href = `patient-info.html?patient_id=${encodeURIComponent(patient.patient_id)}`;
   } catch (err) {
     if (msgEl) {
-      msgEl.textContent = `Error: ${err.message}`;
+      msgEl.textContent = friendlyErrorMessage(err);
       msgEl.style.display = "block";
     }
+    if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = submitBtnLabel; }
   }
 });

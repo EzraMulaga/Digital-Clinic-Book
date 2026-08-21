@@ -1,6 +1,6 @@
 import { requireAuth } from "../auth/access-control.js";
 import { searchPatients, getPatient } from "../services/clinic-services.js";
-import { escapeHtml } from "../utils/html-utils.js";
+import { escapeHtml, friendlyErrorMessage } from "../utils/html-utils.js";
 
 await requireAuth();
 
@@ -50,6 +50,6 @@ form.addEventListener("submit", async (e) => {
       : "<li>No matches found.</li>";
 
   } catch (err) {
-    results.innerHTML = `<li>Error: ${escapeHtml(err.message)}</li>`;
+    results.innerHTML = `<li class="error-message">${escapeHtml(friendlyErrorMessage(err, "We couldn't complete that search. Please try again."))}</li>`;
   }
 });

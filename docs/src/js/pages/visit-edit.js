@@ -1,6 +1,6 @@
 import { requireAuth, getUserRole } from "../auth/access-control.js";
 import { getVisit, updateVisit, addDiagnosis, addPrescription, addTreatment } from "../services/clinic-services.js";
-import { escapeHtml } from "../utils/html-utils.js";
+import { escapeHtml, friendlyErrorMessage, validateRequiredFields } from "../utils/html-utils.js";
 
 const session = await requireAuth("user-login.html");
 const role = await getUserRole(session.user.id);
@@ -69,19 +69,21 @@ function renderTreatments(items) {
     : "<li class='note'>No treatments recorded.</li>";
 }
 
+// Handle visit details update
+const visitEditForm = document.getElementById("visit-edit-form");
+const visitEditMsg = document.getElementById("visit-edit-message");
+
 // Load current visit data into the form
 let visit;
 try {
   visit = await getVisit(visitId);
 
-  const form = document.getElementById("visit-edit-form");
-  if (form) {
+  if (visitEditForm) {
     const setVal = (name, value) => {
-      const el = form.elements[name];
+      const el = visitEditForm.elements[name];
       if (el && value != null) el.value = value;
     };
     setVal("reason_for_visit", visit.reason_for_visit);
-    setVal("practitioner_name", visit.practitioner_name);
   }
 
   renderDiagnoses(visit.diagnoses ?? []);
@@ -89,38 +91,43 @@ try {
   renderTreatments(visit.treatments ?? []);
 } catch (err) {
   console.error("Failed to load visit data:", err);
+  if (visitEditMsg) {
+    visitEditMsg.textContent = `${friendlyErrorMessage(err, "We couldn't load this visit.")} Please try reloading the page.`;
+    visitEditMsg.className = "error-message";
+    visitEditMsg.style.display = "block";
+  }
 }
-
-// Handle visit details update
-const visitEditForm = document.getElementById("visit-edit-form");
-const visitEditMsg = document.getElementById("visit-edit-message");
 
 visitEditForm.addEventListener("submit", async (e) => {
   e.preventDefault();
-  if (visitEditMsg) { visitEditMsg.style.display = "none"; visitEditMsg.textContent = ""; }
+  if (visitEditMsg) { visitEditMsg.style.display = "none"; visitEditMsg.textContent = ""; visitEditMsg.className = "note"; }
+
+  const valid = validateRequiredFields(visitEditForm, [
+    { name: "reason_for_visit", label: "Reason for visit" },
+  ]);
+  if (!valid) return;
 
   const fd = new FormData(visitEditForm);
   const reason_for_visit = fd.get("reason_for_visit")?.trim();
 
-  if (!reason_for_visit) {
-    if (visitEditMsg) { visitEditMsg.textContent = "Reason for visit is required."; visitEditMsg.style.display = "block"; }
-    return;
-  }
+  const visitEditSubmitBtn = visitEditForm.querySelector('button[type="submit"]');
+  const visitEditSubmitLabel = visitEditSubmitBtn?.textContent;
+  if (visitEditSubmitBtn) { visitEditSubmitBtn.disabled = true; visitEditSubmitBtn.textContent = "Saving…"; }
 
   try {
-    await updateVisit(visitId, {
-      reason_for_visit,
-      practitioner_name: fd.get("practitioner_name")?.trim() || null,
-    });
+    await updateVisit(visitId, { reason_for_visit });
     if (visitEditMsg) {
       visitEditMsg.textContent = "Visit details updated.";
       visitEditMsg.style.display = "block";
     }
   } catch (err) {
     if (visitEditMsg) {
-      visitEditMsg.textContent = `Error: ${err.message}`;
+      visitEditMsg.textContent = friendlyErrorMessage(err);
+      visitEditMsg.className = "error-message";
       visitEditMsg.style.display = "block";
     }
+  } finally {
+    if (visitEditSubmitBtn) { visitEditSubmitBtn.disabled = false; visitEditSubmitBtn.textContent = visitEditSubmitLabel; }
   }
 });
 
@@ -130,15 +137,19 @@ const diagnosisMsg = document.getElementById("diagnosis-message");
 
 addDiagnosisForm.addEventListener("submit", async (e) => {
   e.preventDefault();
-  if (diagnosisMsg) { diagnosisMsg.style.display = "none"; diagnosisMsg.textContent = ""; }
+  if (diagnosisMsg) { diagnosisMsg.style.display = "none"; diagnosisMsg.textContent = ""; diagnosisMsg.className = "note"; }
+
+  const valid = validateRequiredFields(addDiagnosisForm, [
+    { name: "diagnosis", label: "Diagnosis" },
+  ]);
+  if (!valid) return;
 
   const fd = new FormData(addDiagnosisForm);
   const diagnosis = fd.get("diagnosis")?.trim();
 
-  if (!diagnosis) {
-    if (diagnosisMsg) { diagnosisMsg.textContent = "Diagnosis is required."; diagnosisMsg.style.display = "block"; }
-    return;
-  }
+  const diagnosisSubmitBtn = addDiagnosisForm.querySelector('button[type="submit"]');
+  const diagnosisSubmitLabel = diagnosisSubmitBtn?.textContent;
+  if (diagnosisSubmitBtn) { diagnosisSubmitBtn.disabled = true; diagnosisSubmitBtn.textContent = "Saving…"; }
 
   try {
     await addDiagnosis({ visit_id: visitId, diagnosis, notes: fd.get("diagnosis_notes")?.trim() || null });
@@ -148,7 +159,9 @@ addDiagnosisForm.addEventListener("submit", async (e) => {
     const refreshed = await getVisit(visitId);
     renderDiagnoses(refreshed.diagnoses ?? []);
   } catch (err) {
-    if (diagnosisMsg) { diagnosisMsg.textContent = `Error: ${err.message}`; diagnosisMsg.style.display = "block"; }
+    if (diagnosisMsg) { diagnosisMsg.textContent = friendlyErrorMessage(err); diagnosisMsg.className = "error-message"; diagnosisMsg.style.display = "block"; }
+  } finally {
+    if (diagnosisSubmitBtn) { diagnosisSubmitBtn.disabled = false; diagnosisSubmitBtn.textContent = diagnosisSubmitLabel; }
   }
 });
 
@@ -158,15 +171,19 @@ const prescriptionMsg = document.getElementById("prescription-message");
 
 addPrescriptionForm.addEventListener("submit", async (e) => {
   e.preventDefault();
-  if (prescriptionMsg) { prescriptionMsg.style.display = "none"; prescriptionMsg.textContent = ""; }
+  if (prescriptionMsg) { prescriptionMsg.style.display = "none"; prescriptionMsg.textContent = ""; prescriptionMsg.className = "note"; }
+
+  const valid = validateRequiredFields(addPrescriptionForm, [
+    { name: "medication_name", label: "Medication name" },
+  ]);
+  if (!valid) return;
 
   const fd = new FormData(addPrescriptionForm);
   const medication_name = fd.get("medication_name")?.trim();
 
-  if (!medication_name) {
-    if (prescriptionMsg) { prescriptionMsg.textContent = "Medication name is required."; prescriptionMsg.style.display = "block"; }
-    return;
-  }
+  const prescriptionSubmitBtn = addPrescriptionForm.querySelector('button[type="submit"]');
+  const prescriptionSubmitLabel = prescriptionSubmitBtn?.textContent;
+  if (prescriptionSubmitBtn) { prescriptionSubmitBtn.disabled = true; prescriptionSubmitBtn.textContent = "Saving…"; }
 
   try {
     await addPrescription({
@@ -183,7 +200,9 @@ addPrescriptionForm.addEventListener("submit", async (e) => {
     const refreshed = await getVisit(visitId);
     renderPrescriptions(refreshed.prescriptions ?? []);
   } catch (err) {
-    if (prescriptionMsg) { prescriptionMsg.textContent = `Error: ${err.message}`; prescriptionMsg.style.display = "block"; }
+    if (prescriptionMsg) { prescriptionMsg.textContent = friendlyErrorMessage(err); prescriptionMsg.className = "error-message"; prescriptionMsg.style.display = "block"; }
+  } finally {
+    if (prescriptionSubmitBtn) { prescriptionSubmitBtn.disabled = false; prescriptionSubmitBtn.textContent = prescriptionSubmitLabel; }
   }
 });
 
@@ -193,15 +212,19 @@ const treatmentMsg = document.getElementById("treatment-message");
 
 addTreatmentForm.addEventListener("submit", async (e) => {
   e.preventDefault();
-  if (treatmentMsg) { treatmentMsg.style.display = "none"; treatmentMsg.textContent = ""; }
+  if (treatmentMsg) { treatmentMsg.style.display = "none"; treatmentMsg.textContent = ""; treatmentMsg.className = "note"; }
+
+  const valid = validateRequiredFields(addTreatmentForm, [
+    { name: "treatment", label: "Treatment" },
+  ]);
+  if (!valid) return;
 
   const fd = new FormData(addTreatmentForm);
   const treatment = fd.get("treatment")?.trim();
 
-  if (!treatment) {
-    if (treatmentMsg) { treatmentMsg.textContent = "Treatment is required."; treatmentMsg.style.display = "block"; }
-    return;
-  }
+  const treatmentSubmitBtn = addTreatmentForm.querySelector('button[type="submit"]');
+  const treatmentSubmitLabel = treatmentSubmitBtn?.textContent;
+  if (treatmentSubmitBtn) { treatmentSubmitBtn.disabled = true; treatmentSubmitBtn.textContent = "Saving…"; }
 
   try {
     await addTreatment({ visit_id: visitId, treatment, notes: fd.get("treatment_notes")?.trim() || null });
@@ -211,6 +234,8 @@ addTreatmentForm.addEventListener("submit", async (e) => {
     const refreshed = await getVisit(visitId);
     renderTreatments(refreshed.treatments ?? []);
   } catch (err) {
-    if (treatmentMsg) { treatmentMsg.textContent = `Error: ${err.message}`; treatmentMsg.style.display = "block"; }
+    if (treatmentMsg) { treatmentMsg.textContent = friendlyErrorMessage(err); treatmentMsg.className = "error-message"; treatmentMsg.style.display = "block"; }
+  } finally {
+    if (treatmentSubmitBtn) { treatmentSubmitBtn.disabled = false; treatmentSubmitBtn.textContent = treatmentSubmitLabel; }
   }
 });

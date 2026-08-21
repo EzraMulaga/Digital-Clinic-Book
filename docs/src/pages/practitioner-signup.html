@@ -51,16 +51,19 @@
         <label>
           First Name *
           <input type="text" name="first_name" placeholder="e.g. Alice" required />
+          <span class="field-error" data-error-for="first_name"></span>
         </label>
 
         <label>
           Last Name *
           <input type="text" name="last_name" placeholder="e.g. Johnson" required />
+          <span class="field-error" data-error-for="last_name"></span>
         </label>
 
         <label>
           Registration Number *
           <input type="text" name="registration_number" placeholder="e.g. MED-12345" required />
+          <span class="field-error" data-error-for="registration_number"></span>
         </label>
 
         <label>
@@ -73,21 +76,25 @@
             <option value="Pharmacist">Pharmacist</option>
             <option value="Specialist">Specialist</option>
           </select>
+          <span class="field-error" data-error-for="role"></span>
         </label>
 
         <label>
           Email Address *
           <input type="email" name="email" placeholder="practitioner@example.com" required />
+          <span class="field-error" data-error-for="email"></span>
         </label>
 
         <label>
           Password *
           <input type="password" name="password" minlength="8" required />
+          <span class="field-error" data-error-for="password"></span>
         </label>
 
         <label>
           Confirm Password *
           <input type="password" name="confirm_password" minlength="8" required />
+          <span class="field-error" data-error-for="confirm_password"></span>
         </label>
 
         <button type="submit" class="btn">Create Account</button>

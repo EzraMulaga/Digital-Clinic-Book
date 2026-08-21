@@ -53,16 +53,13 @@
         <label>
           Patient ID *
           <input type="text" id="patient_id" name="patient_id" placeholder="Patient UUID" required />
+          <span class="field-error" data-error-for="patient_id"></span>
         </label>
 
         <label>
           Reason for Visit *
           <input type="text" name="reason_for_visit" placeholder="e.g. Fever and headache" required />
-        </label>
-
-        <label>
-          Practitioner Name
-          <input type="text" name="practitioner_name" placeholder="e.g. Dr. Alice Johnson" />
+          <span class="field-error" data-error-for="reason_for_visit"></span>
         </label>
 
         <fieldset>

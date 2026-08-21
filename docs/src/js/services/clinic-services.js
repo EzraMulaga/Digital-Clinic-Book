@@ -37,7 +37,8 @@ export async function getPatientVisits(patientId){
     const {data, error} = await supabase
     .from("visits")
     .select(`
-      visit_id, visit_date, reason_for_visit, practitioner_name, created_at,
+      visit_id, visit_date, reason_for_visit, created_at,
+      practitioner:practitioners(first_name, last_name),
       diagnoses(diagnosis_id, diagnosis, notes, created_at),
       prescriptions(prescription_id, medication_name, dosage, frequency, duration, instructions, created_at),
       treatments(treatment_id, treatment, notes, created_at)
@@ -52,10 +53,10 @@ export async function getPatientVisits(patientId){
 }
 
 // Creates visits
-export async function createVisit({ patient_id, reason_for_visit, practitioner_name, practitioner_id }) {
+export async function createVisit({ patient_id, reason_for_visit, practitioner_id }) {
   const { data, error } = await supabase
     .from("visits")
-    .insert([{ patient_id, reason_for_visit, practitioner_name, practitioner_id }])
+    .insert([{ patient_id, reason_for_visit, practitioner_id }])
     .select("visit_id")
     .single();
 
@@ -85,7 +86,8 @@ export async function getVisit(visitId) {
   const { data, error } = await supabase
     .from("visits")
     .select(`
-      visit_id, visit_date, reason_for_visit, practitioner_name, patient_id,
+      visit_id, visit_date, reason_for_visit, patient_id,
+      practitioner:practitioners(first_name, last_name),
       diagnoses(diagnosis_id, diagnosis, notes),
       prescriptions(prescription_id, medication_name, dosage, frequency, duration, instructions),
       treatments(treatment_id, treatment, notes)

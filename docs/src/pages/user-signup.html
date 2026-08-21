@@ -51,11 +51,13 @@
         <label>
           First Name *
           <input type="text" name="first_name" placeholder="e.g. John" required />
+          <span class="field-error" data-error-for="first_name"></span>
         </label>
 
         <label>
           Last Name *
           <input type="text" name="last_name" placeholder="e.g. Smith" required />
+          <span class="field-error" data-error-for="last_name"></span>
         </label>
 
         <label>
@@ -97,16 +99,19 @@
         <label>
           Email Address *
           <input type="email" name="email" placeholder="patient@example.com" required />
+          <span class="field-error" data-error-for="email"></span>
         </label>
 
         <label>
           Password *
           <input type="password" name="password" minlength="8" required />
+          <span class="field-error" data-error-for="password"></span>
         </label>
 
         <label>
           Confirm Password *
           <input type="password" name="confirm_password" minlength="8" required />
+          <span class="field-error" data-error-for="confirm_password"></span>
         </label>
 
         <button type="submit" class="btn">Create Account</button>

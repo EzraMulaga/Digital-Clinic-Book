@@ -1,6 +1,6 @@
 import { requireAuth, getUserRole } from "../auth/access-control.js";
 import { getVisit } from "../services/clinic-services.js";
-import { escapeHtml } from "../utils/html-utils.js";
+import { escapeHtml, friendlyErrorMessage } from "../utils/html-utils.js";
 
 const session = await requireAuth("user-login.html");
 const role = await getUserRole(session.user.id);
@@ -41,7 +41,11 @@ try {
 
   if (visitDateEl) visitDateEl.textContent = new Date(visit.visit_date).toLocaleString();
   if (visitReasonEl) visitReasonEl.textContent = visit.reason_for_visit ?? "—";
-  if (visitPractitionerEl) visitPractitionerEl.textContent = visit.practitioner_name ?? "—";
+  if (visitPractitionerEl) {
+    visitPractitionerEl.textContent = visit.practitioner
+      ? `${visit.practitioner.first_name} ${visit.practitioner.last_name}`
+      : "—";
+  }
 
   if (backLink && visit.patient_id) {
     backLink.href = `patient-info.html?patient_id=${encodeURIComponent(visit.patient_id)}`;
@@ -91,5 +95,8 @@ try {
       : "<li class='note'>No treatments recorded for this visit.</li>";
   }
 } catch (err) {
-  if (loadingEl) loadingEl.textContent = `Error loading visit: ${err.message}`;
+  if (loadingEl) {
+    loadingEl.textContent = `${friendlyErrorMessage(err, "We couldn't load this visit.")} Please try again.`;
+    loadingEl.className = "error-message";
+  }
 }

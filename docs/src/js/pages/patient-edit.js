@@ -1,5 +1,6 @@
 import { requireAuth, getUserRole } from "../auth/access-control.js";
 import { getPatient, updatePatient } from "../services/clinic-services.js";
+import { friendlyErrorMessage, validateRequiredFields } from "../utils/html-utils.js";
 
 const session = await requireAuth("user-login.html");
 const role = await getUserRole(session.user.id);
@@ -28,6 +29,7 @@ if (logoutBtn) {
 }
 
 const form = document.getElementById("patient-edit-form");
+const msgEl = document.getElementById("form-message");
 
 // Load current patient data into the form
 try {
@@ -47,15 +49,28 @@ try {
   setVal("emergency_notes", patient.emergency_notes);
 } catch (err) {
   console.error("Failed to load patient data:", err);
+  if (msgEl) {
+    msgEl.textContent = `${friendlyErrorMessage(err, "We couldn't load this patient's details.")} Please try reloading the page.`;
+    msgEl.className = "error-message";
+    msgEl.style.display = "block";
+  }
 }
 
 // Handle form submission
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const msgEl = document.getElementById("form-message");
-  if (msgEl) { msgEl.style.display = "none"; msgEl.textContent = ""; }
+  if (msgEl) { msgEl.style.display = "none"; msgEl.textContent = ""; msgEl.className = "note"; }
+
+  const valid = validateRequiredFields(form, [
+    { name: "first_name", label: "First name" },
+    { name: "last_name", label: "Last name" },
+  ]);
+  if (!valid) return;
 
   const fd = new FormData(form);
+  const submitBtn = form.querySelector('button[type="submit"]');
+  const submitBtnLabel = submitBtn?.textContent;
+  if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = "Saving…"; }
 
   try {
     await updatePatient(patientId, {
@@ -71,8 +86,10 @@ form.addEventListener("submit", async (e) => {
     window.location.href = `patient-info.html?patient_id=${encodeURIComponent(patientId)}`;
   } catch (err) {
     if (msgEl) {
-      msgEl.textContent = `Error saving: ${err.message}`;
+      msgEl.textContent = friendlyErrorMessage(err);
+      msgEl.className = "error-message";
       msgEl.style.display = "block";
     }
+    if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = submitBtnLabel; }
   }
 });

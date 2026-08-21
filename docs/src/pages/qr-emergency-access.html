@@ -2,60 +2,28 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Emergency QR Access</title>
+  <title>Emergency Medical Info | Digital Clinic Book</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <!-- Shared CSS -->
   <link rel="stylesheet" href="../css/main.css" />
-
-
 </head>
 <body>
 
-  <!-- Header -->
   <header class="site-header emergency">
-    <h1>Emergency Access</h1>
-    <p class="tagline">Scan patient QR code to access emergency info</p>
+    <h1>Emergency Medical Info</h1>
+    <p class="tagline">Enter the code from the patient's card or QR label</p>
   </header>
-  <!-- Disclaimer not for medical use. Demo only. -->
-  <section class="demo-notice">
-  <h2>Demo Environment Notice</h2>
-  <p>
-    This website is a <strong>demonstration version</strong> of the Digital Clinic Book system.
-  </p>
-  <p>
-    All data displayed on this site is <strong>entirely fictional</strong> and is used solely for
-    demonstration and testing purposes.
-  </p>
-  <p>
-    This application is <strong>not a live medical system</strong> and must not be used for
-    clinical decision-making, patient care, or real-world medical records.
-  </p>
-</section>
-<!-- Navigation Bar-->
-<nav class="main-nav">
-    <ul>
-      <li><a href="../../index.html">Home</a></li>
-      <li><a href="patient-search.html">Patient Lookup</a></li>
-      <li><a href="practitioner-login.html">Practitioner Login</a></li>
-      <li><a href="user-login.html">Patient Login</a></li>
-      <li><a href="qr-emergency-access.html">QR Scanner</a></li>
-      <li><a href="about.html" class="active">About</a></li>
-    </ul>
-  </nav>
-  <main>
 
-    <section class="card">
+  <main class="emergency-main">
+
+    <section class="card emergency-lookup">
       <label>
-        QR Token
-        <input type="text" id="qr-token" placeholder="Paste or scan QR token" />
+        Emergency Code
+        <input type="text" id="qr-token" placeholder="e.g. 8f3a1c9e2b7d4f0a" autocomplete="off" />
       </label>
-      <button class="btn" id="load-emergency-btn">Load Emergency Data</button>
+      <button class="btn danger" id="load-emergency-btn">Show Emergency Info</button>
     </section>
 
-    <section class="card" id="emergency-data">
-      <!-- Emergency data will load here -->
-    </section>
+    <section id="emergency-data"></section>
 
     <section class="card" id="full-access-section" style="display:none;">
       <button class="btn" id="full-record-btn">
@@ -64,6 +32,12 @@
     </section>
 
   </main>
+
+  <footer class="site-footer">
+    <p>Digital Clinic Book demo — all data shown is fictional, for demonstration only. Not for real medical use.</p>
+    <p><a href="../../index.html">Home</a></p>
+  </footer>
+
   <script type="module" src="../js/qr/qr-emergency.js"></script>
 </body>
 </html>

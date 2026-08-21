@@ -11,18 +11,14 @@ if (Choose navigation) then (About)
 
 elseif (QR Emergency Access)
   :Open QR Emergency Access (src/pages/qr-emergency-access.html);
-  :Scan/Enter QR Token;
-  if (Token valid?) then (Yes)
-    :Open Emergency Access (src/pages/emergency-access.html);
+  :Enter emergency code;
+  if (Code valid?) then (Yes)
+    :Show emergency info inline (blood type, allergies,
+    chronic conditions, emergency notes);
   else (No)
-    :Show error / retry;
-    :Open QR Emergency Access (src/pages/qr-emergency-access.html);
+    :Open Invalid QR Code (src/pages/invalid-token.html);
+    :Retry QR Scan or Return Home;
   endif
-  :Return Home;
-  :Open Home (docs/index.html);
-
-elseif (Emergency Access)
-  :Open Emergency Access (src/pages/emergency-access.html);
   :Return Home;
   :Open Home (docs/index.html);
 

@@ -1,6 +1,6 @@
 import { requireAuth, getUserRole } from "../auth/access-control.js";
 import { createVisit, addDiagnosis, addPrescription, addTreatment } from "../services/clinic-services.js";
-import { escapeHtml } from "../utils/html-utils.js";
+import { escapeHtml, friendlyErrorMessage, validateRequiredFields } from "../utils/html-utils.js";
 
 const session = await requireAuth("user-login.html");
 const role = await getUserRole(session.user.id);
@@ -37,21 +37,24 @@ form.addEventListener("submit", async (e) => {
   e.preventDefault();
   if (msgEl) { msgEl.style.display = "none"; msgEl.textContent = ""; }
 
+  const valid = validateRequiredFields(form, [
+    { name: "patient_id", label: "Patient ID" },
+    { name: "reason_for_visit", label: "Reason for visit" },
+  ]);
+  if (!valid) return;
+
   const fd = new FormData(form);
   const patient_id = fd.get("patient_id")?.trim();
   const reason_for_visit = fd.get("reason_for_visit")?.trim();
-  const practitioner_name = fd.get("practitioner_name")?.trim() || null;
 
-  if (!patient_id || !reason_for_visit) {
-    if (msgEl) { msgEl.textContent = "Patient ID and Reason for Visit are required."; msgEl.style.display = "block"; }
-    return;
-  }
+  const submitBtn = form.querySelector('button[type="submit"]');
+  const submitBtnLabel = submitBtn?.textContent;
+  if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = "Saving…"; }
 
   try {
     const visit = await createVisit({
       patient_id,
       reason_for_visit,
-      practitioner_name,
       practitioner_id: role.practitioner_id ?? null,
     });
 
@@ -86,8 +89,9 @@ form.addEventListener("submit", async (e) => {
     window.location.href = `visit-details.html?visit_id=${encodeURIComponent(visit_id)}`;
   } catch (err) {
     if (msgEl) {
-      msgEl.textContent = `Error: ${err.message}`;
+      msgEl.textContent = friendlyErrorMessage(err);
       msgEl.style.display = "block";
     }
+    if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = submitBtnLabel; }
   }
 });

@@ -45,17 +45,13 @@
     <!-- Edit Visit Details -->
     <section class="card login-card">
       <h2>Update Visit Details</h2>
-      <p class="note">Update the reason for visit or practitioner name.</p>
+      <p class="note">Update the reason for visit.</p>
 
       <form id="visit-edit-form">
         <label>
           Reason for Visit *
           <input type="text" name="reason_for_visit" placeholder="e.g. Fever and headache" required />
-        </label>
-
-        <label>
-          Practitioner Name
-          <input type="text" name="practitioner_name" placeholder="e.g. Dr. Alice Johnson" />
+          <span class="field-error" data-error-for="reason_for_visit"></span>
         </label>
 
         <button type="submit" class="btn">Save Changes</button>
@@ -80,6 +76,7 @@
         <label>
           Diagnosis *
           <input type="text" name="diagnosis" placeholder="e.g. Upper Respiratory Infection" required />
+          <span class="field-error" data-error-for="diagnosis"></span>
         </label>
         <label>
           Notes
@@ -105,6 +102,7 @@
         <label>
           Medication Name *
           <input type="text" name="medication_name" placeholder="e.g. Amoxicillin" required />
+          <span class="field-error" data-error-for="medication_name"></span>
         </label>
         <label>
           Dosage
@@ -142,6 +140,7 @@
         <label>
           Treatment *
           <input type="text" name="treatment" placeholder="e.g. Steam inhalation" required />
+          <span class="field-error" data-error-for="treatment"></span>
         </label>
         <label>
           Notes
