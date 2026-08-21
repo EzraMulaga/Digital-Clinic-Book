@@ -11,6 +11,24 @@
 
 
 -- ---------------------------------------------------------------------------
+-- 0. Practitioner accounts are inactive by default
+-- ---------------------------------------------------------------------------
+-- Self-registration alone must never be sufficient to grant access to patient
+-- data. Every practitioner RLS policy below keys off is_active = true, so a
+-- freshly self-registered practitioner must NOT start active. The app also
+-- sets is_active: false explicitly on insert (see createPractitionerProfile
+-- in access-control.js) as defense in depth, but the column default must
+-- match in case any other insert path is ever added.
+--
+-- There is no in-app admin UI for activation yet. Verify the practitioner's
+-- registration_number out-of-band, then activate manually, e.g.:
+--
+--   update practitioners set is_active = true where practitioner_id = '...';
+--
+alter table practitioners alter column is_active set default false;
+
+
+-- ---------------------------------------------------------------------------
 -- 1. patients
 -- ---------------------------------------------------------------------------
 alter table patients enable row level security;
@@ -445,7 +463,59 @@ grant execute on function register_patient_user to authenticated;
 
 
 -- ---------------------------------------------------------------------------
--- 10. Refresh PostgREST schema cache
+-- 10. Emergency QR lookup (SECURITY DEFINER, unauthenticated)
+-- ---------------------------------------------------------------------------
+-- The QR emergency-access flow (qr-emergency.js) must work for a logged-out
+-- visitor who only has the printed/scanned qr_token. All RLS policies on
+-- `patients` above are `to authenticated`, and the `anon` role has no grant
+-- on the table, so a direct query from that page would always return
+-- nothing.
+--
+-- A plain public view is NOT used here on purpose: granting `select` on a
+-- view over `patients` to `anon` would let anyone enumerate every patient's
+-- emergency data (name, allergies, conditions, notes) by querying the view
+-- with no filter -- PostgREST applies the caller's WHERE clause on top of
+-- whatever the view already allows, it doesn't enforce one. A SECURITY
+-- DEFINER function that takes the token as a parameter avoids this: the
+-- WHERE clause is baked into the function body, so the caller can only ever
+-- get back the single row matching a token they already possess, never a
+-- full listing. This preserves the "qr_token is unguessable" guarantee
+-- described in Database Schema.md section 7.3.
+drop function if exists get_emergency_patient_by_token(text);
+
+create or replace function get_emergency_patient_by_token(p_qr_token text)
+returns table (
+  patient_id uuid,
+  first_name text,
+  last_name text,
+  date_of_birth date,
+  blood_type text,
+  allergies text,
+  chronic_conditions text,
+  emergency_notes text
+)
+language sql
+security definer
+set search_path = public
+stable
+as $$
+  select
+    patient_id, first_name, last_name, date_of_birth,
+    blood_type, allergies, chronic_conditions, emergency_notes
+  from patients
+  where qr_token = p_qr_token
+  limit 1;
+$$;
+
+-- Callable by anyone, logged in or not -- this is the whole point of the
+-- emergency flow. It never exposes visit history or any other table.
+revoke all on function get_emergency_patient_by_token(text) from public;
+grant execute on function get_emergency_patient_by_token(text) to anon;
+grant execute on function get_emergency_patient_by_token(text) to authenticated;
+
+
+-- ---------------------------------------------------------------------------
+-- 11. Refresh PostgREST schema cache
 -- ---------------------------------------------------------------------------
 -- Run this after applying schema or RLS changes so PostgREST picks them up
 -- immediately without a server restart.

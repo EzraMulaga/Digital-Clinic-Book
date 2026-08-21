@@ -1,4 +1,5 @@
 import { supabase } from "../config/supabase.js";
+import { savePendingProfile, createPatientProfile } from "../auth/access-control.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
   // Redirect if already authenticated
@@ -47,51 +48,47 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
 
-    // Step 2: Create the patient record.
-    // The "authenticated can insert patient profile" RLS policy allows any
-    // authenticated user to insert a patient row.  Ownership is established
-    // by the patient_users link inserted in Step 3.
-    const { data: patientData, error: patientError } = await supabase
-      .from("patients")
-      .insert([{
-        first_name,
-        last_name,
-        date_of_birth,
-        blood_type,
-        allergies,
-        chronic_conditions,
-        emergency_notes,
-      }])
-      .select("patient_id")
-      .single();
+    const patientFields = {
+      first_name,
+      last_name,
+      date_of_birth,
+      blood_type,
+      allergies,
+      chronic_conditions,
+      emergency_notes,
+    };
 
-    if (patientError) {
-      if (msgEl) { msgEl.textContent = `Patient record error: ${patientError.message}. Please contact support to complete your registration.`; msgEl.className = "error-message"; msgEl.style.display = "block"; }
+    // Step 2: Create the patient record + link it to this auth user.
+    // If the Supabase project requires email confirmation, signUp() above
+    // does not return a session, so there is no "authenticated" request we
+    // could make yet -- the insert policies would reject it. Defer the
+    // profile creation until the user's first authenticated session instead
+    // (completed automatically by routeAfterAuth() after they confirm and
+    // log in -- see access-control.js).
+    if (!signUpData.session) {
+      savePendingProfile("patient", email, patientFields);
+      if (msgEl) {
+        msgEl.textContent = "Registration started! Please check your email to confirm your account, then log in — we'll finish setting up your profile automatically.";
+        msgEl.className = "note";
+        msgEl.style.display = "block";
+      }
+      form.reset();
       return;
     }
 
-    // Step 3: Link the auth user to the newly created patient record.
-    // The "authenticated can create own patient mapping" RLS policy enforces
-    // that auth_user_id must equal auth.uid(), so users can only link
-    // themselves to a patient record.
-    const { error: linkError } = await supabase
-      .from("patient_users")
-      .insert([{
-        auth_user_id,
-        patient_id: patientData.patient_id,
-      }]);
+    const { error: profileError } = await createPatientProfile(auth_user_id, patientFields);
 
-    if (linkError) {
+    if (profileError) {
       // Sign the user out so they are not left in a broken authenticated state
-      // (patient record exists but has no auth link).  They can try registering
-      // again once the underlying issue is resolved.
+      // (auth account exists but has no linked patient record). They can try
+      // registering again once the underlying issue is resolved.
       await supabase.auth.signOut();
-      if (msgEl) { msgEl.textContent = `Account linking error: ${linkError.message}. Your session has been reset — please try registering again or contact support.`; msgEl.className = "error-message"; msgEl.style.display = "block"; }
+      if (msgEl) { msgEl.textContent = `Patient record error: ${profileError.message}. Your session has been reset — please try registering again or contact support.`; msgEl.className = "error-message"; msgEl.style.display = "block"; }
       return;
     }
 
     if (msgEl) {
-      msgEl.textContent = "Registration successful! Please check your email to confirm your account, then log in.";
+      msgEl.textContent = "Registration successful!";
       msgEl.className = "note";
       msgEl.style.display = "block";
     }

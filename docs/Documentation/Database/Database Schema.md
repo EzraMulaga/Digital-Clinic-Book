@@ -160,7 +160,7 @@ create table practitioners (
   last_name text not null,
   registration_number text unique not null,
   role text not null, -- e.g. Doctor, Nurse, Medical Officer
-  is_active boolean default true,
+  is_active boolean default false, -- self-registration must not grant access; see §6.2
   created_at timestamptz default now()
 );
 ```
@@ -222,13 +222,14 @@ create table practitioners (
   last_name text not null,
   registration_number text unique not null,
   role text not null, -- Doctor, Nurse, Medical Officer
-  is_active boolean default true,
+  is_active boolean default false,
   created_at timestamptz default now()
 );
 ```
 
 * `auth_user_id` links to Supabase email/password login
 * Deactivating a practitioner does not erase history
+* **`is_active` defaults to `false`.** Self-registration (`practitioner-signup.js`) creates the account but does not grant it access — every practitioner-scoped RLS policy requires `is_active = true`. There is no in-app admin UI yet; an operator must verify the practitioner's `registration_number` out-of-band and flip the flag manually (`update practitioners set is_active = true where practitioner_id = '...'`). See `rls-policies.sql` section 0.
 
 ---
 
@@ -271,7 +272,7 @@ add column qr_token text unique not null default encode(gen_random_bytes(16), 'h
 ### 7.2 QR Lookup Flow
 
 ```
-QR Code → qr_token → patient_id → emergency_patient_view
+QR Code → qr_token → get_emergency_patient_by_token() RPC → emergency snapshot
 ```
 
 * Emergency access resolves via token
@@ -302,30 +303,17 @@ add column practitioner_id uuid references practitioners(practitioner_id);
 
 | Actor        | Auth Required | Access Scope                |
 | ------------ | ------------- | --------------------------- |
-| Emergency    | No            | emergency_patient_view only |
+| Emergency    | No            | get_emergency_patient_by_token() RPC only |
 | Patient user | Yes           | Own records only            |
 | Practitioner | Yes           | Role-based full access      |
 
 ---
 
-## 10. Emergency Access View
+## 10. Emergency Access Lookup
 
 Emergency access **must never expose visit history**.
 
-This view restricts data to a life-saving snapshot only.
-
-```sql
-create view emergency_patient_view as
-select
-  patient_id,
-  first_name,
-  last_name,
-  blood_type,
-  allergies,
-  chronic_conditions,
-  emergency_notes
-from patients;
-```
+Lookup is implemented as a `SECURITY DEFINER` RPC, `get_emergency_patient_by_token(p_qr_token text)` (see `rls-policies.sql` section 10), not a public view. A view granted to `anon` would let anyone enumerate every patient's emergency data by querying it with no filter, since PostgREST applies the caller's filter on top of whatever the view already exposes rather than enforcing one. The RPC's `where qr_token = p_qr_token` is baked into the function body instead, so a caller can only ever retrieve the one row matching a token they already possess — preserving the "`qr_token` is unguessable" guarantee from §7.3. The function returns only the life-saving snapshot columns (identity + blood type, allergies, chronic conditions, emergency notes) and nothing from `visits`, `diagnoses`, `treatments`, or `prescriptions`.
 
 ---
 
@@ -509,7 +497,7 @@ notify pgrst, 'reload schema';
 1. Patient is registered → `patients`
 2. Each clinic visit → `visits`
 3. Diagnoses, treatments, prescriptions recorded per visit
-4. Emergency UI queries **only** `emergency_patient_view`
+4. Emergency UI queries **only** the `get_emergency_patient_by_token()` RPC
 5. No emergency write access exists
 
 ---

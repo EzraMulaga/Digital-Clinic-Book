@@ -6,9 +6,12 @@ import { requireAuth, getUserRole, logout } from "../auth/access-control.js";
 
   if (role.type !== "patient") {
     // optional: redirect practitioner to their dashboard
-    window.location.href = role.type === "practitioner"
+    const target = role.type === "practitioner"
       ? "practitioner-dashboard.html"
-      : "user-login.html";
+      : role.type === "inactive_practitioner"
+        ? "user-login.html?error=account_inactive"
+        : "user-login.html?error=account_incomplete";
+    window.location.href = target;
     return;
   }
 

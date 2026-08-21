@@ -5,9 +5,12 @@ import { requireAuth, getUserRole, logout } from "../auth/access-control.js";
   const role = await getUserRole(session.user.id);
 
   if (role.type !== "practitioner") {
-    window.location.href = role.type === "patient"
+    const target = role.type === "patient"
       ? "patient-dashboard.html"
-      : "user-login.html";
+      : role.type === "inactive_practitioner"
+        ? "user-login.html?error=account_inactive"
+        : "user-login.html?error=account_incomplete";
+    window.location.href = target;
     return;
   }
 

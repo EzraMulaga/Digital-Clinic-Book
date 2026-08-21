@@ -1,4 +1,5 @@
 import { supabase } from "../config/supabase.js";
+import { savePendingProfile, createPractitionerProfile } from "../auth/access-control.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
   // Redirect if already authenticated
@@ -44,18 +45,39 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
 
-    // Step 2: Insert practitioner profile
-    const { error: insertError } = await supabase
-      .from("practitioners")
-      .insert([{ auth_user_id, first_name, last_name, registration_number, role }]);
+    const practitionerFields = { first_name, last_name, registration_number, role };
 
-    if (insertError) {
-      if (msgEl) { msgEl.textContent = `Profile error: ${insertError.message}. Please contact support to complete your registration.`; msgEl.className = "error-message"; msgEl.style.display = "block"; }
+    // Step 2: Create the practitioner profile. New practitioners are always
+    // created inactive (createPractitionerProfile enforces this) -- self-
+    // registration alone must never grant access to patient data. Someone
+    // with access to the database must verify and activate the account.
+    //
+    // As with patient signup, if the project requires email confirmation
+    // there's no session yet to insert with, so defer it (see
+    // access-control.js / authRouter.js's routeAfterAuth()).
+    if (!signUpData.session) {
+      savePendingProfile("practitioner", email, practitionerFields);
+      if (msgEl) {
+        msgEl.textContent = "Registration started! Please check your email to confirm your account, then log in — we'll finish setting up your profile automatically. Note: new practitioner accounts are inactive until an administrator verifies and activates them.";
+        msgEl.className = "note";
+        msgEl.style.display = "block";
+      }
+      form.reset();
+      return;
+    }
+
+    const { error: profileError } = await createPractitionerProfile(auth_user_id, practitionerFields);
+
+    if (profileError) {
+      // Sign out so the user isn't left authenticated with no profile row
+      // (consistent with the patient signup failure path).
+      await supabase.auth.signOut();
+      if (msgEl) { msgEl.textContent = `Profile error: ${profileError.message}. Your session has been reset — please try registering again or contact support.`; msgEl.className = "error-message"; msgEl.style.display = "block"; }
       return;
     }
 
     if (msgEl) {
-      msgEl.textContent = "Registration successful! Please check your email to confirm your account, then log in.";
+      msgEl.textContent = "Registration successful! Your account is inactive until an administrator verifies and activates it — you won't have access to patient records until then.";
       msgEl.className = "note";
       msgEl.style.display = "block";
     }

@@ -2,14 +2,15 @@ import { supabase } from "../config/supabase.js";
 import { escapeHtml } from "../utils/html-utils.js";
 
 export async function getEmergencyByToken(token) {
+  // Calls a SECURITY DEFINER RPC rather than querying `patients` directly --
+  // this page is unauthenticated (anon role), and RLS on `patients` only
+  // grants access to authenticated users. See rls-policies.sql section 10.
   const { data, error } = await supabase
-    .from("patients")
-    .select("patient_id, first_name, last_name, date_of_birth, blood_type, allergies, chronic_conditions, emergency_notes")
-    .eq("qr_token", token)
-    .single();
+    .rpc("get_emergency_patient_by_token", { p_qr_token: token });
 
   if (error) throw error;
-  return data;
+  if (!data || data.length === 0) throw new Error("No patient found for that QR token.");
+  return data[0];
 }
 
 document.addEventListener("DOMContentLoaded", () => {
